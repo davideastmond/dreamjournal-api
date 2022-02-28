@@ -1,0 +1,6 @@
+*.json
+*.yml
+*.md
+node_modules
+package.json
+coverage
