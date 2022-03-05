@@ -4,18 +4,14 @@ import express from "express";
 import cors from "cors";
 import connectDB from "./database.config";
 
-import authenticationRouter from "./routes/authentication/authentication"
-import {
-  IS_PRODUCTION,
-} from "./check-environment-variables";
+import authenticationRouter from "./routes/authentication/authentication";
+import { IS_PRODUCTION } from "./check-environment-variables";
 import { validateAPIKey } from "./routes/authentication/middleware/verify-api-key";
 
 const app = express();
 
-
-
 if (IS_PRODUCTION) {
-	app.set("trust proxy", 1);
+  app.set("trust proxy", 1);
 }
 console.log("Production mode?", IS_PRODUCTION);
 app.use(
@@ -33,7 +29,7 @@ app.get("/", validateAPIKey, (_req, res) => {
   res.status(200).send({ status: "API is running" });
 });
 
-app.use("/api/auth", authenticationRouter)
+app.use("/api/auth", authenticationRouter);
 const port = app.get("port");
 
 const server = app.listen(port, () =>
