@@ -1,32 +1,68 @@
-require("dotenv").config()
+require("dotenv").config();
 
-const jwt = require("jsonwebtoken")
+const jwt = require("jsonwebtoken");
 import { IS_PRODUCTION } from "../../check-environment-variables";
-import { TTokenizedObject } from './definitions';
+import {
+  TDecodeResult,
+  TEncodeResult,
+  TPartialTokenSession,
+  TTokenSession,
+} from "./definitions";
 
+const TOKEN_EXPIRE = parseInt(process.env.JWT_TOKEN_EXPIRE);
 export class JWTokenManager {
-  private static readonly JWT_SECRET: string = IS_PRODUCTION ? process.env.PRODUCTION_JSON_SECRET : process.env.DEV_JSON_SECRET;
-
-  public static async signToken(email: string): Promise<string> {
+  private static readonly JWT_SECRET: string = IS_PRODUCTION
+    ? process.env.PRODUCTION_JSON_SECRET
+    : process.env.DEV_JSON_SECRET;
+  private static readonly ALGO: string = "HS256";
+  public static async encodeSession(
+    partialSession: TPartialTokenSession
+  ): Promise<TEncodeResult> {
     return new Promise((resolve, reject) => {
-      jwt.sign({ email }, JWTokenManager.JWT_SECRET, { expiresIn: 60 * 60 }, (err: any, token: string) => {
-        if (err) {
-          reject(new Error(err))
+      const issued = Date.now();
+      const fifteenMinutesInMs = TOKEN_EXPIRE;
+      const expires = issued + fifteenMinutesInMs;
+
+      const session: TTokenSession = {
+        ...partialSession,
+        issued,
+        expires,
+      };
+      jwt.sign(
+        session,
+        JWTokenManager.JWT_SECRET,
+        { algorithm: JWTokenManager.ALGO },
+        (err: any, token: string) => {
+          if (err) {
+            reject(new Error(err));
+          }
+          resolve({
+            token,
+            issued,
+            expires,
+          });
         }
-        resolve(token)
-      })
-    })
+      );
+    });
   }
 
-  public static async verifyToken(token: string): Promise<TTokenizedObject> {
+  public static async decodeSession(token: string): Promise<TDecodeResult> {
     return new Promise((resolve, reject) => {
-      jwt.verify(token, JWTokenManager.JWT_SECRET, (err: any, tokenizedObject: TTokenizedObject) => {
-        if (err) {
-          console.log(err)
-          reject(new Error(`${err.name}: ${err.message}`))
+      jwt.verify(
+        token,
+        JWTokenManager.JWT_SECRET,
+        { algorithm: JWTokenManager.ALGO },
+        (err: any, tokenizedObject: TTokenSession) => {
+          if (err) {
+            console.log(err.message);
+            reject(new Error(`${err.message}`));
+          }
+          resolve({
+            type: "valid",
+            session: tokenizedObject,
+          });
         }
-        resolve(tokenizedObject)
-      })
-    })
+      );
+    });
   }
 }
