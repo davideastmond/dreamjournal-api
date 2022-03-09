@@ -2,7 +2,7 @@ import { MongoMemoryServer } from "mongodb-memory-server";
 import mongoose from "mongoose";
 import { UserModel } from "../../models/user/user.schema";
 import { mongoTestOptions } from "../../test-helpers/mongo-test.config";
-import { checkPassword } from "../../utils/crypto/crypto";
+import { checkPassword, hashPassword } from "../../utils/crypto/crypto";
 
 const options = mongoTestOptions;
 let mongoServer: any;
@@ -24,20 +24,37 @@ afterEach(async () => {
 
 describe("create user tests", () => {
   test("creates new user properly", async () => {
+    const hashPWD = await hashPassword({ password: "somenewpassword123" });
     const newUser = {
       email: "test@example.com",
       firstName: "firstName",
       lastName: "lastName",
-      plainTextPassword: "somenewpassword123",
+      hashedPassword: hashPWD,
     };
-    const createdUser = await UserModel.createUniqueUser(newUser);
+
+    const createdUser = await UserModel.create(newUser);
     expect(createdUser.email).toBe(newUser.email);
     expect(createdUser.firstName).toBe(newUser.firstName);
     expect(createdUser.lastName).toBe(newUser.lastName);
     const validPassword = await checkPassword({
       hashedPassword: createdUser.hashedPassword,
-      plainTextPassword: newUser.plainTextPassword,
+      plainTextPassword: "somenewpassword123",
     });
     expect(validPassword).toBe(true);
+  });
+  test("creates a unique user document that is secure", async () => {
+    const newUser = {
+      email: "test@example.com",
+      firstName: "firstName",
+      lastName: "lastName",
+      plainTextPassword: "password123",
+    };
+
+    const createdUser = await UserModel.createUniqueUser(newUser);
+    expect(createdUser.email).toBe("test@example.com");
+    expect(createdUser).not.toHaveProperty("hashedPassword");
+    expect(createdUser).not.toHaveProperty("jwToken");
+    expect(createdUser).toHaveProperty("_id");
+    expect(createdUser.journalIds).toEqual({});
   });
 });

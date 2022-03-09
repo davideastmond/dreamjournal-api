@@ -1,4 +1,5 @@
 import { Schema, model } from "mongoose";
+import { createJournalEntryForUserId } from "../../controllers/journal/journal.create";
 import { SchemaOptionsWithPojoToMixed } from "../definitions";
 import { IJournal, IJournalDocument, IJournalModel } from "./journal.types";
 
@@ -18,6 +19,7 @@ const journalSchema = new Schema<IJournal>(
   } as SchemaOptionsWithPojoToMixed
 );
 
+journalSchema.statics.createJournalEntryForUserId = createJournalEntryForUserId;
 export default journalSchema;
 export const JournalModel = model<IJournalDocument, IJournalModel>(
   "journal",
