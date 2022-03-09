@@ -1,12 +1,12 @@
 import { Document, Model } from "mongoose";
 export interface IJournalEntry {
   title: string;
-  description: string;
+  description?: string;
   text: string;
-  createdAt: Date;
-  updatedAt: Date;
   photoUrl?: string;
   tags: string[];
+  createdAt: Date;
+  updatedAt: Date;
 }
 
 export interface IJournalEntryDocument extends IJournalEntry, Document {}

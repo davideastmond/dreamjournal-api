@@ -4,11 +4,11 @@ export interface IJournal {
   title: string;
   ownerId: string;
   tags: string[];
+  photoUrl?: string;
+  description?: string;
+  entries: { [keyof: string]: IJournalEntry };
   createdAt: Date;
   updatedAt: Date;
-  photoUrl?: string;
-  description: string;
-  entries: { [keyof: string]: IJournalEntry };
 }
 
 export interface IJournalDocument extends IJournal, Document {}

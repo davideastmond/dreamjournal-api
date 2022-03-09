@@ -1,10 +1,7 @@
-import { Schema, model, SchemaOptions } from "mongoose";
+import { Schema, model } from "mongoose";
 import { createUniqueUser } from "../../controllers/user/user.create";
+import { SchemaOptionsWithPojoToMixed } from "../definitions";
 import { IUser, IUserDocument, IUserModel } from "./user.types";
-
-interface SchemaOptionsWithPojoToMixed extends SchemaOptions {
-  typePojoToMixed: boolean;
-}
 
 const userSchema = new Schema<IUser>(
   {
