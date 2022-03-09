@@ -1,7 +1,7 @@
 export type TTokenizedObject = { email: string; iat: number; exp: number };
 
 export type TTokenSession = {
-  id: string;
+  _id: string;
   email: string;
   createdAt: number;
   issued: number;
@@ -22,10 +22,8 @@ export type TDecodeResult =
       session: TTokenSession;
     }
   | {
-      type: "integrity-error";
-    }
-  | {
-      type: "invalid-token";
+      type: "invalid";
+      message?: string;
     };
 
-export type ExpirationStatus = "expired" | "active" | "grace";
+export type TExpirationStatus = "expired" | "active" | "grace";

@@ -1,3 +1,4 @@
+require("dotenv").config();
 import { UserModel } from "../../models/user/user.schema";
 import { TPartialTokenSession, TTokenSession } from "./definitions";
 import { JWTokenManager } from "./jwt";
@@ -34,13 +35,11 @@ describe("JWToken class tests", () => {
     });
 
     const partialSession: TPartialTokenSession = {
-      id: testUser._id.toString(),
+      _id: testUser._id.toString(),
       createdAt: Date.now(),
       email: testUser.email,
     };
     const encodingResult = await JWTokenManager.encodeSession(partialSession);
-
-    console.log(encodingResult);
     expect(encodingResult).toBeDefined();
     expect(typeof encodingResult.token).toBe("string");
   });
@@ -53,7 +52,7 @@ describe("JWToken class tests", () => {
     });
 
     const partialSession: TPartialTokenSession = {
-      id: testUser._id.toString(),
+      _id: testUser._id.toString(),
       createdAt: Date.now(),
       email: testUser.email,
     };
@@ -72,8 +71,56 @@ describe("JWToken class tests", () => {
   });
   test("expect error when token is invalid", async () => {
     const badToken = "soknlasdf";
+    const alternateToken = process.env.INVALID_TEST_TOKEN;
+    await expect(() => JWTokenManager.decodeSession(badToken)).rejects.toEqual({
+      type: "invalid",
+      message: "jwt malformed",
+    });
+
     await expect(() =>
-      JWTokenManager.decodeSession(badToken)
-    ).rejects.toThrow();
+      JWTokenManager.decodeSession(alternateToken)
+    ).rejects.toEqual({
+      type: "invalid",
+      message: "invalid token",
+    });
+  });
+  describe("check expiration status tests", () => {
+    test("return active status", async () => {
+      const mockSession: TTokenSession = {
+        _id: "test",
+        email: "test",
+        createdAt: Date.now(),
+        issued: Date.now(),
+        expires: Date.now() + parseInt(process.env.JWT_TOKEN_EXPIRE),
+      };
+
+      const expirationStatus =
+        JWTokenManager.checkExpirationStatus(mockSession);
+      expect(expirationStatus).toBe("active");
+    });
+    test("returns grace status", async () => {
+      const mockSession: TTokenSession = {
+        _id: "test",
+        email: "test",
+        createdAt: Date.now(),
+        issued: Date.now(),
+        expires: Date.now() - parseInt(process.env.JWT_TOKEN_EXPIRE),
+      };
+      const expirationStatus =
+        JWTokenManager.checkExpirationStatus(mockSession);
+      expect(expirationStatus).toBe("grace");
+    });
+    test("returns expired status", async () => {
+      const mockSession: TTokenSession = {
+        _id: "test",
+        email: "test",
+        createdAt: Date.now(),
+        issued: Date.now(),
+        expires: Date.now() - 4 * 60 * 60 * 1000,
+      };
+      const expirationStatus =
+        JWTokenManager.checkExpirationStatus(mockSession);
+      expect(expirationStatus).toBe("expired");
+    });
   });
 });

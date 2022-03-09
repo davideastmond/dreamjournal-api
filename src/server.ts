@@ -1,12 +1,12 @@
 require("dotenv").config();
 const bodyParser = require("body-parser");
+const cookieParser = require("cookie-parser");
 import express from "express";
 import cors from "cors";
 import connectDB from "./database.config";
-
 import authenticationRouter from "./routes/authentication/authentication";
 import { IS_PRODUCTION } from "./check-environment-variables";
-import { validateAPIKey } from "./routes/authentication/middleware/verify-api-key";
+import { validateAPIKey } from "./routes/authentication/middleware/validate-api-key";
 
 const app = express();
 
@@ -14,10 +14,12 @@ if (IS_PRODUCTION) {
   app.set("trust proxy", 1);
 }
 console.log("Production mode?", IS_PRODUCTION);
+app.use(cookieParser());
 app.use(
   cors({
     credentials: true,
     origin: true,
+    exposedHeaders: ["X-JWT-Token", "X-Renewed-JWT-Token"],
   })
 );
 app.use(bodyParser.json());
