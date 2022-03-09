@@ -5,6 +5,7 @@ import express from "express";
 import cors from "cors";
 import connectDB from "./database.config";
 import authenticationRouter from "./routes/authentication/authentication";
+import userRouter from "./routes/user/user";
 import { IS_PRODUCTION } from "./check-environment-variables";
 import { validateAPIKey } from "./routes/authentication/middleware/validate-api-key";
 
@@ -32,6 +33,7 @@ app.get("/", validateAPIKey, (_req, res) => {
 });
 
 app.use("/api/auth", authenticationRouter);
+app.use("/api/user", userRouter);
 const port = app.get("port");
 
 const server = app.listen(port, () =>
