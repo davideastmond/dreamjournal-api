@@ -1,6 +1,7 @@
 import { IJournalModel } from "../../models/journal/journal.types";
 import { UserModel } from "../../models/user/user.schema";
 import { TNewJournalReturnData } from "../../models/user/user.types";
+import { convertToSecureUser } from "../user/utils";
 
 export async function createJournalEntryForUserId(
   this: IJournalModel,
@@ -33,7 +34,7 @@ export async function createJournalEntryForUserId(
     user.markModified("journalIds");
     await user.save();
     return {
-      user,
+      user: convertToSecureUser(user),
       journal: newJournal,
     };
   } else {

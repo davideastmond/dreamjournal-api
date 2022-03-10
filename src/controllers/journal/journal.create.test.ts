@@ -39,5 +39,9 @@ describe("create new journal tests", () => {
     expect(result.user._id.toString()).toBe(testUser._id.toString());
     expect(result.journal.ownerId).toBe(testUser._id.toString());
     expect(result.user.journalIds[result.journal._id.toString()]).toBeDefined();
+    expect(result.journal.description).toBe("some description");
+    expect(result.journal.title).toBe("my journal");
+    expect(result.journal.tags.length).toBe(2);
+    expect(result.journal.tags[1]).toBe("tag2");
   });
 });
