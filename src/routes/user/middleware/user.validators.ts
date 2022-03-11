@@ -39,18 +39,6 @@ export const restrictedAccessToSessionUserData = async (
   next();
 };
 
-export const mongooseJournalIdValidator = (): any[] => {
-  return [
-    param("journalEntryId")
-      .exists()
-      .custom(async (value: string) => {
-        if (!mongoose.Types.ObjectId.isValid(value)) {
-          return Promise.reject("Journal id is invalid");
-        }
-      }),
-  ];
-};
-
 export const mongooseJournalEntryIdValidator = (): any[] => {
   return [
     param("journalId")

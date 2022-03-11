@@ -5,12 +5,8 @@ import { jwtVerifyMiddleWare } from "../authentication/middleware/jwt-middleware
 import { validateAPIKey } from "../authentication/middleware/validate-api-key";
 import { validateRouteRequest } from "../middleware/validate-route-request";
 import { createUserJournal } from "./middleware/user.journal.post";
+import { getJournalsForUserId } from "./middleware/user.journals.get";
 import {
-  getJournalsForUserId,
-  getJournalById,
-} from "./middleware/user.journals.get";
-import {
-  mongooseJournalIdValidator,
   mongooseUserIdValidator,
   newJournalValidator,
   restrictedAccessToSessionUserData,
@@ -24,20 +20,7 @@ router.get(
   jwtVerifyMiddleWare,
   mongooseUserIdValidator(),
   validateRouteRequest,
-  restrictedAccessToSessionUserData,
   getJournalsForUserId
-);
-
-// Get a specific journal
-router.get(
-  "/:userId/journals/:journalId",
-  validateAPIKey,
-  jwtVerifyMiddleWare,
-  mongooseUserIdValidator(),
-  mongooseJournalIdValidator(),
-  validateRouteRequest,
-  restrictedAccessToSessionUserData,
-  getJournalById
 );
 
 // Create a new journal
@@ -51,12 +34,6 @@ router.post(
   restrictedAccessToSessionUserData,
   createUserJournal
 );
-
-// Update a journal - at the journal attributes level
-router.patch("/:userId/journals/:journalId");
-
-// Delete a specific journal by id
-router.delete("/:userId/journals/:journalId");
 
 // Create a new journal entry on a specific journal
 router.put("/:userId/journals/:journalId");
