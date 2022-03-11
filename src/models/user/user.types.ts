@@ -22,7 +22,9 @@ export type TNewJournalReturnData = {
   user: TSecureUser;
   journal: IJournalDocument;
 };
-export interface IUserDocument extends IUser, Document {}
+export interface IUserDocument extends IUser, Document {
+  getAllJournals: () => Promise<IJournalDocument[]>;
+}
 export interface IUserModel extends Model<IUserDocument> {
   createUniqueUser: ({
     email,
@@ -34,5 +36,5 @@ export interface IUserModel extends Model<IUserDocument> {
     firstName: string;
     lastName: string;
     plainTextPassword: string;
-  }) => Promise<TSecureUser>;
+  }) => Promise<IUserDocument>;
 }

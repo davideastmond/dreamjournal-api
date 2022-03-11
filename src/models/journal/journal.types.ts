@@ -1,4 +1,3 @@
-import { IJournalEntry } from "../journalEntry/journal-entry.types";
 import { Document, Model } from "mongoose";
 import { TNewJournalReturnData } from "../user/user.types";
 export interface IJournal {
@@ -7,7 +6,7 @@ export interface IJournal {
   tags?: string[];
   photoUrl?: string;
   description?: string;
-  entries: { [keyof: string]: IJournalEntry };
+  journalEntryIds: { [keyof: string]: Date };
   createdAt: Date;
   updatedAt: Date;
 }
@@ -27,4 +26,5 @@ export interface IJournalModel extends Model<IJournalDocument> {
     photoUrl?: string;
     tags?: Array<string>;
   }) => Promise<TNewJournalReturnData>;
+  findManyById: (arrayOfIds: string[]) => Promise<IJournalDocument[]>;
 }

@@ -6,16 +6,39 @@ import { validateAPIKey } from "../authentication/middleware/validate-api-key";
 import { validateRouteRequest } from "../middleware/validate-route-request";
 import { createUserJournal } from "./middleware/user.journal.post";
 import {
+  getJournalsForUserId,
+  getJournalById,
+} from "./middleware/user.journals.get";
+import {
+  mongooseJournalIdValidator,
   mongooseUserIdValidator,
   newJournalValidator,
+  restrictedAccessToSessionUserData,
 } from "./middleware/user.validators";
 const router = express.Router();
 
 // Get all journals for a user
-router.get("/:userId/journals");
+router.get(
+  "/:userId/journals",
+  validateAPIKey,
+  jwtVerifyMiddleWare,
+  mongooseUserIdValidator(),
+  validateRouteRequest,
+  restrictedAccessToSessionUserData,
+  getJournalsForUserId
+);
 
 // Get a specific journal
-router.get("/:userId/journals/:journalId");
+router.get(
+  "/:userId/journals/:journalId",
+  validateAPIKey,
+  jwtVerifyMiddleWare,
+  mongooseUserIdValidator(),
+  mongooseJournalIdValidator(),
+  validateRouteRequest,
+  restrictedAccessToSessionUserData,
+  getJournalById
+);
 
 // Create a new journal
 router.post(
@@ -25,6 +48,7 @@ router.post(
   mongooseUserIdValidator(),
   newJournalValidator(),
   validateRouteRequest,
+  restrictedAccessToSessionUserData,
   createUserJournal
 );
 

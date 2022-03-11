@@ -1,5 +1,7 @@
 import { Document, Model } from "mongoose";
 export interface IJournalEntry {
+  parentJournalId: string;
+  ownerId: string;
   title: string;
   description?: string;
   text: string;

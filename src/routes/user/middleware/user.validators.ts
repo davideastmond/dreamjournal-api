@@ -1,4 +1,5 @@
 import { checkSchema, param } from "express-validator";
+import { NextFunction, Request, Response } from "express";
 import mongoose from "mongoose";
 import { isURLValid } from "../../../utils/string-validation/url-valid";
 
@@ -12,6 +13,30 @@ export const mongooseUserIdValidator = (): any[] => {
         }
       }),
   ];
+};
+
+// This makes sure that the requestor has an authenticated session and is only accessing their own information
+export const restrictedAccessToSessionUserData = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  const { userId } = req.params;
+  if (!userId)
+    return res
+      .status(401)
+      .send({ error: "Private session: userId parameter not defined" });
+
+  const { session } = res.locals;
+  if (!session)
+    return res
+      .status(401)
+      .send({ error: "Private session: can't find session" });
+  if (session._id !== userId)
+    return res
+      .status(401)
+      .send({ error: "Not authorized: userId-sessionId mismatch" });
+  next();
 };
 
 export const mongooseJournalIdValidator = (): any[] => {

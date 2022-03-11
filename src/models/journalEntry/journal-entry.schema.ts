@@ -8,6 +8,8 @@ import {
 
 const journalEntrySchema = new Schema<IJournalEntry>(
   {
+    parentJournalId: { type: String, required: true },
+    ownerId: { type: String, required: true },
     title: { type: String, required: true },
     description: { type: String, required: false },
     text: { type: String, required: true },

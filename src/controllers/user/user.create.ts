@@ -1,6 +1,5 @@
-import { IUserModel, TSecureUser } from "../../models/user/user.types";
+import { IUserDocument, IUserModel } from "../../models/user/user.types";
 import { hashPassword } from "../../utils/crypto/crypto";
-import { convertToSecureUser } from "./utils";
 
 export async function createUniqueUser(
   this: IUserModel,
@@ -15,7 +14,7 @@ export async function createUniqueUser(
     lastName: string;
     plainTextPassword: string;
   }
-): Promise<TSecureUser> {
+): Promise<IUserDocument> {
   const userDocument = await this.findOne({
     "email": email,
   });
@@ -29,5 +28,5 @@ export async function createUniqueUser(
     lastName,
     hashedPassword,
   });
-  return convertToSecureUser(newUser);
+  return newUser;
 }
