@@ -1,9 +1,9 @@
 import { MongoMemoryServer } from "mongodb-memory-server";
 import mongoose from "mongoose";
 import { JournalModel } from "../../models/journal/journal.schema";
-import { UserModel } from "../../models/user/user.schema";
 
 import { mongoTestOptions } from "../../test-helpers/mongo-test.config";
+import { getMockUser } from "../utils/mock-user";
 
 const options = mongoTestOptions;
 let mongoServer: any;
@@ -25,12 +25,7 @@ afterEach(async () => {
 
 describe("journal find tests", () => {
   test("journal model function to find journals by array of ids works properly", async () => {
-    const dummyUser = await UserModel.createUniqueUser({
-      firstName: "fn",
-      lastName: "ln",
-      email: "email@email.com",
-      plainTextPassword: "pwd123",
-    });
+    const dummyUser = await getMockUser();
 
     const journal1 = await JournalModel.createJournalEntryForUserId({
       ownerId: dummyUser._id.toString(),

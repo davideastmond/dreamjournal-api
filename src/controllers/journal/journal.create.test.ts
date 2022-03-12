@@ -24,20 +24,20 @@ afterEach(async () => {
 
 describe("create new journal tests", () => {
   test("creates new journal successfully", async () => {
-    const testUser = await UserModel.createUniqueUser({
+    const mockUser = await UserModel.createUniqueUser({
       email: "hi@email.com",
       firstName: "f",
       lastName: "ln",
       plainTextPassword: "pwd1234565",
     });
     const result = await JournalModel.createJournalEntryForUserId({
-      ownerId: testUser._id.toString(),
+      ownerId: mockUser._id.toString(),
       description: "some description",
       tags: ["tag1", "tag2"],
       title: "my journal",
     });
-    expect(result.user._id.toString()).toBe(testUser._id.toString());
-    expect(result.journal.ownerId).toBe(testUser._id.toString());
+    expect(result.user._id.toString()).toBe(mockUser._id.toString());
+    expect(result.journal.ownerId).toBe(mockUser._id.toString());
     expect(result.user.journalIds[result.journal._id.toString()]).toBeDefined();
     expect(result.journal.description).toBe("some description");
     expect(result.journal.title).toBe("my journal");

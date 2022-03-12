@@ -1,6 +1,9 @@
-import { IJournalModel } from "../../models/journal/journal.types";
+import {
+  IJournalModel,
+  TNewJournalReturnData,
+} from "../../models/journal/journal.types";
 import { UserModel } from "../../models/user/user.schema";
-import { TNewJournalReturnData } from "../../models/user/user.types";
+
 import { convertToSecureUser } from "../user/utils";
 
 export async function createJournalEntryForUserId(

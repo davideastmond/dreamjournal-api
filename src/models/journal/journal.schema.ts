@@ -1,6 +1,7 @@
 import { Schema, model } from "mongoose";
 import { createJournalEntryForUserId } from "../../controllers/journal/journal.create";
 import { findManyById } from "../../controllers/journal/journal.find";
+import { patchJournalAttributes } from "../../controllers/journal/journal.update";
 import { SchemaOptionsWithPojoToMixed } from "../definitions";
 import { IJournal, IJournalDocument, IJournalModel } from "./journal.types";
 
@@ -20,6 +21,7 @@ const journalSchema = new Schema<IJournal>(
   } as SchemaOptionsWithPojoToMixed
 );
 
+journalSchema.methods.patchJournalAttributes = patchJournalAttributes;
 journalSchema.statics.createJournalEntryForUserId = createJournalEntryForUserId;
 journalSchema.statics.findManyById = findManyById;
 export default journalSchema;

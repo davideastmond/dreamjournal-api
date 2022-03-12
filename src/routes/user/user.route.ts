@@ -4,6 +4,7 @@ import * as express from "express";
 import { jwtVerifyMiddleWare } from "../authentication/middleware/jwt-middleware";
 import { validateAPIKey } from "../authentication/middleware/validate-api-key";
 import { validateRouteRequest } from "../middleware/validate-route-request";
+import { getSecureUserProfile } from "./middleware/get.user";
 import { createUserJournal } from "./middleware/user.journal.post";
 import { getJournalsForUserId } from "./middleware/user.journals.get";
 import {
@@ -12,6 +13,16 @@ import {
   restrictedAccessToSessionUserData,
 } from "./middleware/user.validators";
 const router = express.Router();
+
+// Get user info
+router.get(
+  "/:userId",
+  validateAPIKey,
+  jwtVerifyMiddleWare,
+  mongooseUserIdValidator(),
+  validateRouteRequest,
+  getSecureUserProfile
+);
 
 // Get all journals for a user
 router.get(
@@ -34,9 +45,6 @@ router.post(
   restrictedAccessToSessionUserData,
   createUserJournal
 );
-
-// Create a new journal entry on a specific journal
-router.put("/:userId/journals/:journalId");
 
 // Update a specific journal entry on a specific journal
 router.patch("/:userId/journals/:journalId/:journalEntryId");

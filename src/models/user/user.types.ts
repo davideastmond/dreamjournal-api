@@ -8,6 +8,8 @@ export interface IUser {
   hashedPassword: string;
   journalIds: { [keyof: string]: Date };
   jwToken: string;
+  createdAt: Date;
+  updatedAt: Date;
 }
 
 export type TSecureUser = {
@@ -16,12 +18,10 @@ export type TSecureUser = {
   firstName: string;
   lastName: string;
   journalIds: { [keyof: string]: Date };
+  createdAt: Date;
+  updatedAt: Date;
 };
 
-export type TNewJournalReturnData = {
-  user: TSecureUser;
-  journal: IJournalDocument;
-};
 export interface IUserDocument extends IUser, Document {
   getAllJournals: () => Promise<IJournalDocument[]>;
 }

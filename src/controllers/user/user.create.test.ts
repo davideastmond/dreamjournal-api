@@ -42,19 +42,4 @@ describe("create user tests", () => {
     });
     expect(validPassword).toBe(true);
   });
-  test("creates a unique user document that is secure", async () => {
-    const newUser = {
-      email: "test@example.com",
-      firstName: "firstName",
-      lastName: "lastName",
-      plainTextPassword: "password123",
-    };
-
-    const createdUser = await UserModel.createUniqueUser(newUser);
-    expect(createdUser.email).toBe("test@example.com");
-    expect(createdUser).not.toHaveProperty("hashedPassword");
-    expect(createdUser).not.toHaveProperty("jwToken");
-    expect(createdUser).toHaveProperty("_id");
-    expect(createdUser.journalIds).toEqual({});
-  });
 });

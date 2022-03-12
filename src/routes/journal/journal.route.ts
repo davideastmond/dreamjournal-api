@@ -6,7 +6,10 @@ import { validateAPIKey } from "../authentication/middleware/validate-api-key";
 import { validateRouteRequest } from "../middleware/validate-route-request";
 
 import { getJournalById } from "./middleware/get.journal";
-import { mongooseJournalIdValidator } from "./middleware/journal.validators";
+import {
+  mongooseJournalIdValidator,
+  patchJournalAttributesValidator,
+} from "./middleware/journal.validators";
 const router = express.Router();
 
 // Get a specific journal - must exist on the user document
@@ -19,10 +22,20 @@ router.get(
   getJournalById
 );
 
-// Update a journal - at the journal attributes level
-router.patch("/:journalId");
+// Create a new journal entry on a specific journal
+router.put("/:journalId/entry");
 
-// Delete a specific journal by id
-router.delete("/:userId/journals/:journalId");
+// Update a journal's attributes level
+router.patch(
+  "/:journalId",
+  validateAPIKey,
+  jwtVerifyMiddleWare,
+  mongooseJournalIdValidator(),
+  patchJournalAttributesValidator(),
+  validateRouteRequest
+);
+
+// Delete a specific journal by id - all
+router.delete("/:journalId");
 
 export default router;
