@@ -1,4 +1,4 @@
-import { checkSchema, param } from "express-validator";
+import { body, checkSchema, param } from "express-validator";
 import mongoose from "mongoose";
 import { isURLValid } from "../../../utils/string-validation/url-valid";
 
@@ -33,6 +33,7 @@ export function patchJournalAttributesValidator(): any {
           "When performing update operation, the value for data should exist and be a non-empty string",
         custom: {
           options: (value, { req }) => {
+            if (!req.body.title) return true;
             if (req.body.title.action === "update") {
               if (value && value.trim().length > 0) return true;
               return false;
@@ -51,6 +52,7 @@ export function patchJournalAttributesValidator(): any {
       "description.data": {
         custom: {
           options: (value, { req }) => {
+            if (!req.body.description) return true;
             if (req.body.description.action === "update") {
               if (value && value.trim().length > 0) return true;
               return false;
@@ -68,6 +70,7 @@ export function patchJournalAttributesValidator(): any {
       "tags.data": {
         custom: {
           options: (value, { req }) => {
+            if (!req.body.tags) return true;
             if (value && req.body.tags.action === "update") {
               if (!Array.isArray(value)) return false;
               if (value.length && value.length === 0) return false;
@@ -87,6 +90,7 @@ export function patchJournalAttributesValidator(): any {
           "The value for data should exist and be in a URL format, pointing to some resource. If you want to delete photoUrl data, use the `delete` action",
         custom: {
           options: (value, { req }) => {
+            if (!req.body.photoUrl) return true;
             if (req.body.photoUrl.action === "update") {
               if (!value || value.trim().length === 0) return false;
               if (!isURLValid(value)) return false;
@@ -97,5 +101,40 @@ export function patchJournalAttributesValidator(): any {
         },
       },
     }),
+  ];
+}
+
+export function newJournalEntryValidator(): any {
+  return [
+    body("title").exists().isString().trim(),
+    body("description").customSanitizer((value) => {
+      if (!value) return "";
+      return value;
+    }),
+    body("text").exists().isString().trim(),
+    body("photoUrl")
+      .customSanitizer((value) => {
+        if (!value) return "";
+        return value;
+      })
+      .custom((value) => {
+        if (value && value.trim().length > 0) {
+          if (isURLValid(value)) return true;
+          return false;
+        }
+        return true;
+      }),
+    body("tags")
+      .customSanitizer((value) => {
+        if (!value) return [];
+        return value;
+      })
+      .custom((value) => {
+        if (value) {
+          if (Array.isArray(value)) return true;
+          return false;
+        }
+        return true;
+      }),
   ];
 }
