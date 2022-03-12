@@ -7,8 +7,8 @@ export interface IJournalEntry {
   text: string;
   photoUrl?: string;
   tags: string[];
-  createdAt: Date;
-  updatedAt: Date;
+  createdAt?: Date;
+  updatedAt?: Date;
 }
 
 export interface IJournalEntryDocument extends IJournalEntry, Document {}

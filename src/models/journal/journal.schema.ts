@@ -1,8 +1,10 @@
 import { Schema, model } from "mongoose";
+import { addNewEntry } from "../../controllers/journal/journal-entry.create";
 import { createJournalEntryForUserId } from "../../controllers/journal/journal.create";
 import { findManyById } from "../../controllers/journal/journal.find";
 import { patchJournalAttributes } from "../../controllers/journal/journal.update";
 import { SchemaOptionsWithPojoToMixed } from "../definitions";
+import journalEntrySchema from "../journalEntry/journal-entry.schema";
 import { IJournal, IJournalDocument, IJournalModel } from "./journal.types";
 
 const journalSchema = new Schema<IJournal>(
@@ -12,7 +14,11 @@ const journalSchema = new Schema<IJournal>(
     tags: { type: [String], required: false, default: [] },
     photoUrl: { type: String, required: false },
     description: { type: String, required: false },
-    journalEntryIds: { type: Schema.Types.Mixed, required: true, default: {} },
+    journalEntries: {
+      type: [journalEntrySchema],
+      required: false,
+      default: [],
+    },
   },
   {
     timestamps: true,
@@ -22,6 +28,7 @@ const journalSchema = new Schema<IJournal>(
 );
 
 journalSchema.methods.patchJournalAttributes = patchJournalAttributes;
+journalSchema.methods.addNewEntry = addNewEntry;
 journalSchema.statics.createJournalEntryForUserId = createJournalEntryForUserId;
 journalSchema.statics.findManyById = findManyById;
 export default journalSchema;

@@ -1,4 +1,5 @@
 import { Document, Model } from "mongoose";
+import { IJournalEntry } from "../journalEntry/journal-entry.types";
 import { TSecureUser } from "../user/user.types";
 
 export interface IJournal {
@@ -7,7 +8,7 @@ export interface IJournal {
   tags?: string[];
   photoUrl?: string;
   description?: string;
-  journalEntryIds: { [keyof: string]: Date };
+  journalEntries: Array<IJournalEntry>;
   createdAt: Date;
   updatedAt: Date;
 }
@@ -19,6 +20,19 @@ export interface IJournalDocument extends IJournal, Document {
     description,
     photoUrl,
   }: TJournalAttributesPatchPackageData) => Promise<TJournalAttributesReturnData>;
+  addNewEntry: ({
+    title,
+    description,
+    text,
+    photoUrl,
+    tags,
+  }: {
+    title: string;
+    description?: string;
+    text: string;
+    photoUrl?: string;
+    tags: string[];
+  }) => Promise<IJournalDocument>;
 }
 
 export type TNewJournalReturnData = {
@@ -42,12 +56,14 @@ export type TPatchData = {
 export type TJournalFieldUpdateAction = {
   field: "title" | "tags" | "description" | "photoUrl" | "no changes";
   action: TUpdateAction;
+  data?: string | string[] | null;
 };
 
 export type TJournalAttributesReturnData = {
   actionsTaken: TJournalFieldUpdateAction[];
   journal: IJournalDocument | null;
 };
+
 export interface IJournalModel extends Model<IJournalDocument> {
   createJournalEntryForUserId: ({
     ownerId,

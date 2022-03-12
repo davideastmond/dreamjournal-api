@@ -1,10 +1,6 @@
-import { Schema, model } from "mongoose";
+import { Schema } from "mongoose";
 import { SchemaOptionsWithPojoToMixed } from "../definitions";
-import {
-  IJournalEntry,
-  IJournalEntryDocument,
-  IJournalEntryModel,
-} from "./journal-entry.types";
+import { IJournalEntry } from "./journal-entry.types";
 
 const journalEntrySchema = new Schema<IJournalEntry>(
   {
@@ -24,7 +20,3 @@ const journalEntrySchema = new Schema<IJournalEntry>(
 );
 
 export default journalEntrySchema;
-export const JournalEntryModel = model<
-  IJournalEntryDocument,
-  IJournalEntryModel
->("journalEntry", journalEntrySchema);
