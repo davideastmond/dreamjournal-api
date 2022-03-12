@@ -39,7 +39,7 @@ describe("journal attributes patch tests", () => {
         },
       });
       expect(patchData.actionsTaken).toEqual([
-        { "action": "update", "field": "title" },
+        { "action": "update", "field": "title", "data": "newly updated title" },
       ]);
       expect(patchData.journal.title).toBe("newly updated title");
     });
@@ -66,11 +66,29 @@ describe("journal attributes patch tests", () => {
       });
       expect(patchData.journal.tags).toEqual(["tag3", "tag4"]);
       expect(patchData.actionsTaken).toEqual([
-        { field: "tags", action: "update" },
-        { field: "description", action: "update" },
+        { field: "tags", action: "update", data: ["tag3", "tag4"] },
+        {
+          field: "description",
+          action: "update",
+          data: "some new description",
+        },
         { field: "photoUrl", action: "delete" },
       ]);
       expect(patchData.journal.photoUrl).toBe("");
+    });
+    test("no journal profile data was patched, expect correct response", async () => {
+      const dummyUser = await getMockUser();
+      const journal = await JournalModel.createJournalEntryForUserId({
+        ownerId: dummyUser._id.toString(),
+        title: "journal1",
+        description: "desc journal1",
+        photoUrl: "http://www.zone.com/photo.jpg",
+      });
+      const patchData = await journal.journal.patchJournalAttributes({});
+      expect(patchData.actionsTaken).toEqual([
+        { "action": null, "field": "no changes" },
+      ]);
+      expect(patchData.journal).toBeNull();
     });
   });
 });
