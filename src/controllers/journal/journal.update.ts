@@ -11,12 +11,13 @@ export async function patchJournalAttributes(
 ): Promise<TJournalAttributesReturnData> {
   const changes: TJournalFieldUpdateAction[] = [];
 
-  if (title) {
+  if (title && title.action) {
     if (title.action === "update") {
       this.title = title.data as string;
       changes.push({
         field: "title",
         action: title.action,
+        data: title.data,
       });
     } else {
       throw new Error(
@@ -25,12 +26,13 @@ export async function patchJournalAttributes(
     }
   }
 
-  if (tags) {
+  if (tags && tags.action) {
     if (tags.action === "update") {
       this.tags = tags.data as string[];
       changes.push({
         field: "tags",
         action: tags.action,
+        data: tags.data,
       });
     } else if (tags.action === "delete") {
       this.tags = [];
@@ -41,28 +43,30 @@ export async function patchJournalAttributes(
     }
   }
 
-  if (description) {
+  if (description && description.action) {
     if (description.action === "update") {
       this.description = description.data as string;
       changes.push({
         field: "description",
         action: description.action,
+        data: description.data,
       });
     } else if (description.action === "delete") {
       this.description = "";
       changes.push({
         field: "description",
-        action: tags.action,
+        action: description.action,
       });
     }
   }
 
-  if (photoUrl) {
+  if (photoUrl && photoUrl.action) {
     if (photoUrl.action === "update") {
       this.photoUrl = photoUrl.data as string;
       changes.push({
         field: "photoUrl",
-        action: tags.action,
+        action: photoUrl.action,
+        data: photoUrl.data,
       });
     } else if (photoUrl.action === "delete") {
       this.photoUrl = "";
