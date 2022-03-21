@@ -33,6 +33,7 @@ export interface IJournalDocument extends IJournal, Document {
     photoUrl?: string;
     tags: string[];
   }) => Promise<IJournalDocument>;
+  deleteEntry: (journalEntryId: string) => Promise<IJournalDocument>;
 }
 
 export type TNewJournalReturnData = {
@@ -62,6 +63,12 @@ export type TJournalFieldUpdateAction = {
 export type TJournalAttributesReturnData = {
   actionsTaken: TJournalFieldUpdateAction[];
   journal: IJournalDocument | null;
+};
+
+export type TJournalEntryDeleteResponseData = {
+  action: "delete";
+  deletedJournalEntryId: string;
+  journal: IJournalDocument;
 };
 
 export interface IJournalModel extends Model<IJournalDocument> {

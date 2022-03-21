@@ -14,6 +14,18 @@ export const mongooseJournalIdValidator = (): any[] => {
   ];
 };
 
+export const mongooseJournalEntryIdValidator = (): any[] => {
+  return [
+    param("journalEntryId")
+      .exists()
+      .custom(async (value: string) => {
+        if (!mongoose.Types.ObjectId.isValid(value)) {
+          return Promise.reject("Journal id is invalid");
+        }
+      }),
+  ];
+};
+
 export function patchJournalAttributesValidator(): any {
   const validateActionOptions = (value: any) => {
     if (!value) return true;

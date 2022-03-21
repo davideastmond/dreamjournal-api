@@ -4,7 +4,10 @@ import * as express from "express";
 import { jwtVerifyMiddleWare } from "../authentication/middleware/jwt-middleware";
 import { validateAPIKey } from "../authentication/middleware/validate-api-key";
 import { validateRouteRequest } from "../middleware/validate-route-request";
-import { getSecureUserProfile } from "./middleware/get.user";
+import {
+  checkIfSessionUser,
+  getSecureUserProfile,
+} from "./middleware/get.user";
 import { createUserJournal } from "./middleware/user.journal.post";
 import { getJournalsForUserId } from "./middleware/user.journals.get";
 import {
@@ -19,6 +22,7 @@ router.get(
   "/:userId",
   validateAPIKey,
   jwtVerifyMiddleWare,
+  checkIfSessionUser,
   mongooseUserIdValidator(),
   validateRouteRequest,
   getSecureUserProfile

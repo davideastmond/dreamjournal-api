@@ -1,5 +1,6 @@
 import { Schema, model } from "mongoose";
 import { addNewEntry } from "../../controllers/journal/journal-entry.create";
+import { deleteEntry } from "../../controllers/journal/journal-entry.delete";
 import { createJournalEntryForUserId } from "../../controllers/journal/journal.create";
 import { findManyById } from "../../controllers/journal/journal.find";
 import { patchJournalAttributes } from "../../controllers/journal/journal.update";
@@ -29,6 +30,7 @@ const journalSchema = new Schema<IJournal>(
 
 journalSchema.methods.patchJournalAttributes = patchJournalAttributes;
 journalSchema.methods.addNewEntry = addNewEntry;
+journalSchema.methods.deleteEntry = deleteEntry;
 journalSchema.statics.createJournalEntryForUserId = createJournalEntryForUserId;
 journalSchema.statics.findManyById = findManyById;
 export default journalSchema;
