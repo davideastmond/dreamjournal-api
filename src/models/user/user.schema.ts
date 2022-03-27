@@ -1,10 +1,8 @@
-import { Schema, model, SchemaOptions } from "mongoose";
+import { Schema, model } from "mongoose";
 import { createUniqueUser } from "../../controllers/user/user.create";
+import { getAllJournals } from "../../controllers/user/user.journals.find";
+import { SchemaOptionsWithPojoToMixed } from "../definitions";
 import { IUser, IUserDocument, IUserModel } from "./user.types";
-
-interface SchemaOptionsWithPojoToMixed extends SchemaOptions {
-  typePojoToMixed: boolean;
-}
 
 const userSchema = new Schema<IUser>(
   {
@@ -22,6 +20,7 @@ const userSchema = new Schema<IUser>(
   } as SchemaOptionsWithPojoToMixed
 );
 
+userSchema.methods.getAllJournals = getAllJournals;
 userSchema.statics.createUniqueUser = createUniqueUser;
 
 export default userSchema;

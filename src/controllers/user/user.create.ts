@@ -19,8 +19,14 @@ export async function createUniqueUser(
     "email": email,
   });
   if (userDocument && userDocument.email === email) {
-    throw new Error(`Email address ${email} already exists`);
+    throw new Error(`User with email address: ${email} already exists`);
   }
   const hashedPassword = await hashPassword({ password: plainTextPassword });
-  return this.create({ email, firstName, lastName, hashedPassword });
+  const newUser = await this.create({
+    email,
+    firstName,
+    lastName,
+    hashedPassword,
+  });
+  return newUser;
 }

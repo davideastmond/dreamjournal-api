@@ -1,6 +1,7 @@
 require("dotenv").config();
 
 import * as express from "express";
+import { Request, Response } from "express";
 import { validateRouteRequest } from "../middleware/validate-route-request";
 import {
   loginAuthenticationValidator,
@@ -35,7 +36,7 @@ router.get(
   "/session",
   validateAPIKey,
   jwtVerifyMiddleWare,
-  (req: any, res: any) => {
+  (req: Request, res: Response) => {
     res.status(200).send({ response: "OK" });
   }
 );

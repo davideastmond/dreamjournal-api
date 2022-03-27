@@ -51,10 +51,8 @@ export async function jwtVerifyMiddleWare(
         issued,
       };
       res.setHeader(responseHeader, token);
-      //res.cookie("jwtToken", token, { maxAge: 90000, httpOnly: true })
     } else {
       session = decodedSession.session;
-      //res.cookie("jwtToken", tokenFromHeader, { maxAge: 90000, httpOnly: true })
     }
     res.locals = {
       ...res.locals,
