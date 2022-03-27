@@ -4,7 +4,10 @@ import * as express from "express";
 import { jwtVerifyMiddleWare } from "../authentication/middleware/jwt-middleware";
 import { validateAPIKey } from "../authentication/middleware/validate-api-key";
 import { validateRouteRequest } from "../middleware/validate-route-request";
-import { deleteEntryFromJournal } from "./middleware/delete.journal";
+import {
+  deleteEntryFromJournal,
+  deleteJournal,
+} from "./middleware/delete.journal";
 
 import { getJournalById } from "./middleware/get.journal";
 import {
@@ -60,7 +63,8 @@ router.delete(
   jwtVerifyMiddleWare,
   mongooseJournalIdValidator(),
   secureAccess,
-  validateRouteRequest
+  validateRouteRequest,
+  deleteJournal
 );
 
 router.delete(

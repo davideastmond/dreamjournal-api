@@ -1,6 +1,6 @@
 import { Document, Model } from "mongoose";
 import { IJournalEntry } from "../journalEntry/journal-entry.types";
-import { TSecureUser } from "../user/user.types";
+import { IUserDocument, TSecureUser } from "../user/user.types";
 
 export interface IJournal {
   title: string;
@@ -71,6 +71,16 @@ export type TJournalEntryDeleteResponseData = {
   journal: IJournalDocument;
 };
 
+export type TJournalDeleteResult = {
+  info: {
+    actionTaken: "delete" | "none";
+    otherInfo?: string;
+    deletedJournalId: string;
+  };
+  user: TSecureUser;
+  journals: IJournalDocument[];
+};
+
 export interface IJournalModel extends Model<IJournalDocument> {
   createJournalEntryForUserId: ({
     ownerId,
@@ -86,4 +96,11 @@ export interface IJournalModel extends Model<IJournalDocument> {
     tags?: Array<string>;
   }) => Promise<TNewJournalReturnData>;
   findManyById: (arrayOfIds: string[]) => Promise<IJournalDocument[]>;
+  findByJournalIdAndDelete: ({
+    journalId,
+    requestorId,
+  }: {
+    journalId: string;
+    requestorId: string;
+  }) => Promise<TJournalDeleteResult>;
 }
