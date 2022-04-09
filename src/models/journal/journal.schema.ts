@@ -1,7 +1,8 @@
 import { Schema, model } from "mongoose";
 import { addNewEntry } from "../../controllers/journal/journal-entry.create";
 import { deleteEntry } from "../../controllers/journal/journal-entry.delete";
-import { createJournalEntryForUserId } from "../../controllers/journal/journal.create";
+import { patchJournalEntryAttributes } from "../../controllers/journal/journal-entry.update";
+import { createJournalForUserId } from "../../controllers/journal/journal.create";
 import { findByJournalIdAndDelete } from "../../controllers/journal/journal.delete";
 import { findManyById } from "../../controllers/journal/journal.find";
 import { patchJournalAttributes } from "../../controllers/journal/journal.update";
@@ -28,16 +29,27 @@ const journalSchema = new Schema<IJournal>(
     typePojoToMixed: false,
   } as SchemaOptionsWithPojoToMixed
 );
+journalSchema.index({
+  title: "text",
+  description: "text",
+  "journalEntries.title": "text",
+  "journalEntries.description": "text",
+  "journalEntries.text": "text",
+  "journalEntries.tags": "text",
+});
 
 journalSchema.methods.patchJournalAttributes = patchJournalAttributes;
 journalSchema.methods.addNewEntry = addNewEntry;
 journalSchema.methods.deleteEntry = deleteEntry;
+journalSchema.methods.patchJournalEntryAttributes = patchJournalEntryAttributes;
 
-journalSchema.statics.createJournalEntryForUserId = createJournalEntryForUserId;
+journalSchema.statics.createJournalForUserId = createJournalForUserId;
 
 journalSchema.statics.findManyById = findManyById;
 journalSchema.statics.findByJournalIdAndDelete = findByJournalIdAndDelete;
+
 export default journalSchema;
+
 export const JournalModel = model<IJournalDocument, IJournalModel>(
   "journal",
   journalSchema

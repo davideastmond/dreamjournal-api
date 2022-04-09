@@ -6,7 +6,7 @@ import { UserModel } from "../../models/user/user.schema";
 
 import { convertToSecureUser } from "../user/utils";
 
-export async function createJournalEntryForUserId(
+export async function createJournalForUserId(
   this: IJournalModel,
   {
     ownerId,

@@ -27,7 +27,7 @@ describe("journal attributes patch tests", () => {
   describe("patch some data", () => {
     test("patch the title only", async () => {
       const dummyUser = await getMockUser();
-      const journal = await JournalModel.createJournalEntryForUserId({
+      const journal = await JournalModel.createJournalForUserId({
         ownerId: dummyUser._id.toString(),
         title: "journal1",
         description: "desc journal1",
@@ -45,7 +45,7 @@ describe("journal attributes patch tests", () => {
     });
     test("patch the tags and description, delete the photo", async () => {
       const dummyUser = await getMockUser();
-      const journal = await JournalModel.createJournalEntryForUserId({
+      const journal = await JournalModel.createJournalForUserId({
         ownerId: dummyUser._id.toString(),
         title: "journal1",
         description: "desc journal1",
@@ -78,7 +78,7 @@ describe("journal attributes patch tests", () => {
     });
     test("no journal profile data was patched, expect correct response", async () => {
       const dummyUser = await getMockUser();
-      const journal = await JournalModel.createJournalEntryForUserId({
+      const journal = await JournalModel.createJournalForUserId({
         ownerId: dummyUser._id.toString(),
         title: "journal1",
         description: "desc journal1",

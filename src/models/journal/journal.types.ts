@@ -1,6 +1,6 @@
 import { Document, Model } from "mongoose";
 import { IJournalEntry } from "../journalEntry/journal-entry.types";
-import { IUserDocument, TSecureUser } from "../user/user.types";
+import { TSecureUser } from "../user/user.types";
 
 export interface IJournal {
   title: string;
@@ -34,6 +34,14 @@ export interface IJournalDocument extends IJournal, Document {
     tags: string[];
   }) => Promise<IJournalDocument>;
   deleteEntry: (journalEntryId: string) => Promise<IJournalDocument>;
+  patchJournalEntryAttributes: ({
+    title,
+    tags,
+    description,
+    photoUrl,
+    text,
+    journalEntryId,
+  }: TJournalEntryAttributesPatchPackageData) => Promise<TJournalAttributesReturnData>;
 }
 
 export type TNewJournalReturnData = {
@@ -46,6 +54,11 @@ export type TJournalAttributesPatchPackageData = {
   description?: TPatchData;
   photoUrl?: TPatchData;
 };
+export type TJournalEntryAttributesPatchPackageData =
+  TJournalAttributesPatchPackageData & {
+    text: TPatchData;
+    journalEntryId: string;
+  };
 
 export type TUpdateAction = "update" | "delete";
 
@@ -55,7 +68,7 @@ export type TPatchData = {
 };
 
 export type TJournalFieldUpdateAction = {
-  field: "title" | "tags" | "description" | "photoUrl" | "no changes";
+  field: "title" | "tags" | "description" | "photoUrl" | "text" | "no changes";
   action: TUpdateAction;
   data?: string | string[] | null;
 };
@@ -82,7 +95,7 @@ export type TJournalDeleteResult = {
 };
 
 export interface IJournalModel extends Model<IJournalDocument> {
-  createJournalEntryForUserId: ({
+  createJournalForUserId: ({
     ownerId,
     title,
     description,

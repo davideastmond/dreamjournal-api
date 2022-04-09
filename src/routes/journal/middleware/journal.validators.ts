@@ -112,6 +112,27 @@ export function patchJournalAttributesValidator(): any {
           },
         },
       },
+      "text.action": {
+        errorMessage: "The value for action should be `delete` or `update`",
+        custom: {
+          options: validateActionOptions,
+        },
+      },
+      "text.data": {
+        errorMessage:
+          "The value for data should exist and be in a non-empty string",
+        custom: {
+          options: (value, { req }) => {
+            if (!req.body.text) return true;
+            if (req.body.text.action === "update") {
+              if (value && value.trim().length > 0) return true;
+              return false;
+            }
+            if (req.body.text.action === "delete") return true;
+            return false;
+          },
+        },
+      },
     }),
   ];
 }

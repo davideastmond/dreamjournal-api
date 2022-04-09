@@ -32,17 +32,17 @@ describe("User find own journal tests", () => {
       plainTextPassword: "pwd123",
     });
 
-    await JournalModel.createJournalEntryForUserId({
+    await JournalModel.createJournalForUserId({
       ownerId: dummyUser._id.toString(),
       title: "journal1",
       description: "desc journal1",
     });
-    await JournalModel.createJournalEntryForUserId({
+    await JournalModel.createJournalForUserId({
       ownerId: dummyUser._id.toString(),
       title: "journal2",
       description: "secondJ some kind of data for desc",
     });
-    const journal3 = await JournalModel.createJournalEntryForUserId({
+    const journal3 = await JournalModel.createJournalForUserId({
       ownerId: dummyUser._id.toString(),
       title: "journal3 my j",
       description: "third some kind of wonderful journal for desc 3",

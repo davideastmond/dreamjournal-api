@@ -6,7 +6,7 @@ export async function createUserJournal(req: Request, res: Response) {
   try {
     const _id = getUserId(res);
     const { title, description, photoUrl, tags } = req.body;
-    const journalData = await JournalModel.createJournalEntryForUserId({
+    const journalData = await JournalModel.createJournalForUserId({
       ownerId: _id,
       title,
       description,
