@@ -9,7 +9,7 @@ import {
   deleteJournal,
 } from "./middleware/delete.journal";
 
-import { getJournalById } from "./middleware/get.journal";
+import { getJournalById, sendTagAnalytics } from "./middleware/get.journal";
 import {
   mongooseJournalEntryIdValidator,
   mongooseJournalIdValidator,
@@ -35,6 +35,15 @@ router.get(
   getJournalById
 );
 
+router.get(
+  "/:journalId/tags/analytics",
+  validateAPIKey,
+  jwtVerifyMiddleWare,
+  mongooseJournalIdValidator(),
+  secureAccess,
+  validateRouteRequest,
+  sendTagAnalytics
+);
 // Create a new journal entry on a specific journal
 router.put(
   "/:journalId/entry",

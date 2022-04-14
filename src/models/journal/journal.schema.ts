@@ -1,4 +1,8 @@
 import { Schema, model } from "mongoose";
+import {
+  countAllTags,
+  getTagAggregator,
+} from "../../controllers/journal/journal-analytics";
 import { addNewEntry } from "../../controllers/journal/journal-entry.create";
 import { deleteEntry } from "../../controllers/journal/journal-entry.delete";
 import { patchJournalEntryAttributes } from "../../controllers/journal/journal-entry.update";
@@ -42,11 +46,13 @@ journalSchema.methods.patchJournalAttributes = patchJournalAttributes;
 journalSchema.methods.addNewEntry = addNewEntry;
 journalSchema.methods.deleteEntry = deleteEntry;
 journalSchema.methods.patchJournalEntryAttributes = patchJournalEntryAttributes;
+journalSchema.methods.getTagAggregator = getTagAggregator;
 
 journalSchema.statics.createJournalForUserId = createJournalForUserId;
 
 journalSchema.statics.findManyById = findManyById;
 journalSchema.statics.findByJournalIdAndDelete = findByJournalIdAndDelete;
+journalSchema.statics.countAllTags = countAllTags;
 
 export default journalSchema;
 

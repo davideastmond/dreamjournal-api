@@ -1,4 +1,5 @@
 import { Document, Model } from "mongoose";
+import { TagAggregator } from "../../analytics/tags/tag-analytics";
 import { IJournalEntry } from "../journalEntry/journal-entry.types";
 import { TSecureUser } from "../user/user.types";
 
@@ -42,6 +43,7 @@ export interface IJournalDocument extends IJournal, Document {
     text,
     journalEntryId,
   }: TJournalEntryAttributesPatchPackageData) => Promise<TJournalAttributesReturnData>;
+  getTagAggregator: () => TagAggregator;
 }
 
 export type TNewJournalReturnData = {
@@ -116,4 +118,7 @@ export interface IJournalModel extends Model<IJournalDocument> {
     journalId: string;
     requestorId: string;
   }) => Promise<TJournalDeleteResult>;
+  countAllTags: (
+    userId: string
+  ) => Promise<{ tagCount: { [keyof: string]: number }; journalCount: number }>;
 }

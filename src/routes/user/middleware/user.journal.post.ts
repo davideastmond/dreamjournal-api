@@ -13,7 +13,7 @@ export async function createUserJournal(req: Request, res: Response) {
       photoUrl,
       tags,
     });
-    return res.status(200).send(journalData);
+    return res.status(201).send(journalData);
   } catch (exception: any) {
     return res.status(500).send({ error: exception.message });
   }
