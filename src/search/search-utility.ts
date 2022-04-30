@@ -48,7 +48,15 @@ export class QuerySearch {
       return results.map((result: IJournalDocument) => {
         return {
           journal: result,
-          matchedBy: MatchingCriteria.Default,
+          matchedBy: result.title
+            .toLowerCase()
+            .includes(this.queryString.toLowerCase())
+            ? MatchingCriteria.JournalTitle
+            : result.description
+                .toLowerCase()
+                .includes(this.queryString.toLowerCase())
+            ? MatchingCriteria.JournalDescription
+            : MatchingCriteria.Default,
         };
       });
     }
