@@ -13,8 +13,5 @@
     },
     "noUnusedLocals": true,
   },
-  "include": ["src/**/*"],
-  "files": [
-    "src/routes/custom.response.d.ts"
-  ]
+  "include": ["src/**/*"]
 }
