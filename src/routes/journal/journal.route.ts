@@ -9,14 +9,17 @@ import {
   deleteJournal,
 } from "./middleware/delete.journal";
 
-import { getJournalById } from "./middleware/get.journal";
+import { getJournalById, sendTagAnalytics } from "./middleware/get.journal";
 import {
   mongooseJournalEntryIdValidator,
   mongooseJournalIdValidator,
   newJournalEntryValidator,
   patchJournalAttributesValidator,
 } from "./middleware/journal.validators";
-import { patchJournalAttributes } from "./middleware/patch.journal";
+import {
+  patchJournalAttributes,
+  routePatchJournalEntryAttributes,
+} from "./middleware/patch.journal";
 import { putNewJournalEntry } from "./middleware/put.journal";
 import { secureAccess } from "./middleware/secure-access";
 const router = express.Router();
@@ -32,6 +35,15 @@ router.get(
   getJournalById
 );
 
+router.get(
+  "/:journalId/tags/analytics",
+  validateAPIKey,
+  jwtVerifyMiddleWare,
+  mongooseJournalIdValidator(),
+  secureAccess,
+  validateRouteRequest,
+  sendTagAnalytics
+);
 // Create a new journal entry on a specific journal
 router.put(
   "/:journalId/entry",
@@ -67,13 +79,27 @@ router.delete(
   deleteJournal
 );
 
+// Delete a journal entry
 router.delete(
   "/:journalId/entry/:journalEntryId",
   validateAPIKey,
   jwtVerifyMiddleWare,
   mongooseJournalIdValidator(),
   mongooseJournalEntryIdValidator(),
+  validateRouteRequest,
   deleteEntryFromJournal
+);
+
+router.patch(
+  "/:journalId/entry/:journalEntryId",
+  validateAPIKey,
+  jwtVerifyMiddleWare,
+  mongooseJournalIdValidator(),
+  mongooseJournalEntryIdValidator(),
+  secureAccess,
+  patchJournalAttributesValidator(),
+  validateRouteRequest,
+  routePatchJournalEntryAttributes
 );
 
 export default router;

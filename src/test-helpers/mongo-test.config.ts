@@ -1,5 +1,5 @@
 export const mongoTestOptions = {
-  autoIndex: false,
+  autoIndex: true,
   serverSelectionTimeoutMS: 5000,
   family: 4,
 };

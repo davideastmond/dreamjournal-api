@@ -31,19 +31,19 @@ describe("journal delete tests", () => {
       lastName: "ln",
       plainTextPassword: "pwd1234565",
     });
-    const journal1 = await JournalModel.createJournalEntryForUserId({
+    const journal1 = await JournalModel.createJournalForUserId({
       ownerId: mockUser._id.toString(),
       description: "some description",
       tags: ["1", "2", "3", "4", "5", "6"],
       title: "adventures in dream land",
     });
-    await JournalModel.createJournalEntryForUserId({
+    await JournalModel.createJournalForUserId({
       ownerId: mockUser._id.toString(),
       description: "some description",
       tags: ["zip", "zap", "zop"],
       title: "my journal 3",
     });
-    await JournalModel.createJournalEntryForUserId({
+    await JournalModel.createJournalForUserId({
       ownerId: mockUser._id.toString(),
       description: "some description",
       tags: ["tag1", "tag2"],
@@ -70,19 +70,19 @@ describe("journal delete tests", () => {
       lastName: "ln",
       plainTextPassword: "pwd1234565",
     });
-    const journal1 = await JournalModel.createJournalEntryForUserId({
+    const journal1 = await JournalModel.createJournalForUserId({
       ownerId: mockUser._id.toString(),
       description: "some description",
       tags: ["1", "2", "3", "4", "5", "6"],
       title: "adventures in dream land",
     });
-    await JournalModel.createJournalEntryForUserId({
+    await JournalModel.createJournalForUserId({
       ownerId: mockUser._id.toString(),
       description: "some description",
       tags: ["zip", "zap", "zop"],
       title: "my journal 3",
     });
-    await JournalModel.createJournalEntryForUserId({
+    await JournalModel.createJournalForUserId({
       ownerId: mockUser._id.toString(),
       description: "some description",
       tags: ["tag1", "tag2"],
@@ -108,19 +108,19 @@ describe("journal delete tests", () => {
       lastName: "ln",
       plainTextPassword: "pwd1234565",
     });
-    await JournalModel.createJournalEntryForUserId({
+    await JournalModel.createJournalForUserId({
       ownerId: mockUser._id.toString(),
       description: "some description",
       tags: ["1", "2", "3", "4", "5", "6"],
       title: "adventures in dream land",
     });
-    await JournalModel.createJournalEntryForUserId({
+    await JournalModel.createJournalForUserId({
       ownerId: mockUser._id.toString(),
       description: "some description",
       tags: ["zip", "zap", "zop"],
       title: "my journal 3",
     });
-    await JournalModel.createJournalEntryForUserId({
+    await JournalModel.createJournalForUserId({
       ownerId: mockUser._id.toString(),
       description: "some description",
       tags: ["tag1", "tag2"],

@@ -30,7 +30,7 @@ describe("create new journal tests", () => {
       lastName: "ln",
       plainTextPassword: "pwd1234565",
     });
-    const result = await JournalModel.createJournalEntryForUserId({
+    const result = await JournalModel.createJournalForUserId({
       ownerId: mockUser._id.toString(),
       description: "some description",
       tags: ["tag1", "tag2"],

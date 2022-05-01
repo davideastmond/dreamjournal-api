@@ -26,7 +26,26 @@ export async function getJournalById(req: Request, res: Response) {
         .send({ error: "Unauthorized request or unknown session" });
     }
   } catch (exception: any) {
-    console.error("Exception " + exception);
     return res.status(500).send({ error: `${exception.message}` });
+  }
+}
+
+export async function sendTagAnalytics(req: Request, res: Response) {
+  const { journalId } = req.params;
+
+  try {
+    const journal = await JournalModel.findById(journalId);
+    const tagAggregator = journal.getTagAggregator();
+    const tagAggregationStats = tagAggregator.getAggregation();
+    return res
+      .status(200)
+      .send({
+        journalId: journal._id.toString(),
+        tagCount: tagAggregationStats,
+      });
+  } catch (exception: any) {
+    return res
+      .status(500)
+      .send({ error: `Tags analytics error: ${exception.message}` });
   }
 }

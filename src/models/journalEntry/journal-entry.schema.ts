@@ -11,9 +11,11 @@ const journalEntrySchema = new Schema<IJournalEntry>(
     text: { type: String, required: true },
     photoUrl: { type: String, required: false },
     tags: { type: [String], required: false, default: [] },
+    updatedAt: { type: Date },
+    createdAt: { type: Date },
   },
   {
-    timestamps: true,
+    // timestamps: true,
     strict: false,
     typePojoToMixed: false,
   } as SchemaOptionsWithPojoToMixed

@@ -6,14 +6,14 @@ export async function createUserJournal(req: Request, res: Response) {
   try {
     const _id = getUserId(res);
     const { title, description, photoUrl, tags } = req.body;
-    const journalData = await JournalModel.createJournalEntryForUserId({
+    const journalData = await JournalModel.createJournalForUserId({
       ownerId: _id,
       title,
       description,
       photoUrl,
       tags,
     });
-    return res.status(200).send(journalData);
+    return res.status(201).send(journalData);
   } catch (exception: any) {
     return res.status(500).send({ error: exception.message });
   }

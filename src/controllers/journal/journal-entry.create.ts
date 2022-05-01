@@ -24,6 +24,8 @@ export async function addNewEntry(
     text,
     photoUrl,
     tags,
+    updatedAt: new Date(),
+    createdAt: new Date(),
   };
 
   this.journalEntries.push(entry);

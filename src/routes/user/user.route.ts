@@ -10,6 +10,7 @@ import {
 } from "./middleware/get.user";
 import { createUserJournal } from "./middleware/user.journal.post";
 import { getJournalsForUserId } from "./middleware/user.journals.get";
+import { getAllJournalTagCountAnalytics } from "./middleware/user.journals.tags.analytics.get";
 import {
   mongooseUserIdValidator,
   newJournalValidator,
@@ -34,10 +35,22 @@ router.get(
   validateAPIKey,
   jwtVerifyMiddleWare,
   mongooseUserIdValidator(),
+  restrictedAccessToSessionUserData,
   validateRouteRequest,
   getJournalsForUserId
 );
 
+// Do tag analytics for all journals for user
+router.get(
+  "/:userId/journals/tags/analytics",
+  validateAPIKey,
+  jwtVerifyMiddleWare,
+  mongooseUserIdValidator(),
+  restrictedAccessToSessionUserData,
+  validateRouteRequest,
+  getAllJournalTagCountAnalytics
+  // POIJ
+);
 // Create a new journal
 router.post(
   "/:userId/journals",
