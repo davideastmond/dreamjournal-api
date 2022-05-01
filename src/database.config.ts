@@ -11,7 +11,7 @@ const connectDB = async () => {
   try {
     const mongoURI: string = MONGO_URI;
     const options: ConnectOptions = {
-      autoIndex: false,
+      autoIndex: true,
       serverSelectionTimeoutMS: 5000,
       family: 4,
     };

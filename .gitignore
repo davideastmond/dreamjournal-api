@@ -105,3 +105,6 @@ dist
 
 .vscode/launch.json
 .vscode/settings.json
+
+# Sanbox files
+*.sandbox.ts
