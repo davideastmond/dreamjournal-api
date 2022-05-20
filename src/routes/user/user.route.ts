@@ -12,9 +12,15 @@ import { createUserJournal } from "./middleware/user.journal.post";
 import { getJournalsForUserId } from "./middleware/user.journals.get";
 import { getAllJournalTagCountAnalytics } from "./middleware/user.journals.tags.analytics.get";
 import {
+  updateFirstNameLastName,
+  updatePasswordMiddleware,
+} from "./middleware/user.patch";
+import {
   mongooseUserIdValidator,
   newJournalValidator,
   restrictedAccessToSessionUserData,
+  userBasicProfileUpdateValidator,
+  userPasswordUpdateValidator,
 } from "./middleware/user.validators";
 const router = express.Router();
 
@@ -63,10 +69,23 @@ router.post(
   createUserJournal
 );
 
-// Update a specific journal entry on a specific journal
-router.patch("/:userId/journals/:journalId/:journalEntryId");
+router.patch(
+  "/:userId/profile/secure",
+  validateAPIKey,
+  mongooseUserIdValidator(),
+  userPasswordUpdateValidator(),
+  validateRouteRequest,
+  updatePasswordMiddleware
+);
 
-// Delete a specific journal entry on a specific journal
-router.delete("/:userId/journals/:journalId/:journalEntryId");
+router.patch(
+  "/:userId/profile/basic",
+  validateAPIKey,
+  jwtVerifyMiddleWare,
+  mongooseUserIdValidator(),
+  userBasicProfileUpdateValidator(),
+  validateRouteRequest,
+  updateFirstNameLastName
+);
 
 export default router;

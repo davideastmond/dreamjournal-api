@@ -24,6 +24,11 @@ export type TSecureUser = {
 
 export interface IUserDocument extends IUser, Document {
   getAllJournals: () => Promise<IJournalDocument[]>;
+  updateUserPassword: (plainTextPassword: string) => Promise<void>;
+  updateFirstNameLastName: (data: {
+    firstName: string;
+    lastName: string;
+  }) => Promise<IUserDocument>;
 }
 export interface IUserModel extends Model<IUserDocument> {
   createUniqueUser: ({

@@ -1,4 +1,4 @@
-import { checkSchema, param } from "express-validator";
+import { body, checkSchema, param } from "express-validator";
 import { NextFunction, Request, Response } from "express";
 import mongoose from "mongoose";
 import { isURLValid } from "../../../utils/string-validation/url-valid";
@@ -99,3 +99,14 @@ export function newJournalValidator(): any {
     }),
   ];
 }
+
+export const userPasswordUpdateValidator = (): any[] => {
+  return [body("password").exists().trim().escape()];
+};
+
+export const userBasicProfileUpdateValidator = (): any[] => {
+  return [
+    body("firstName").exists().trim().escape(),
+    body("lastName").exists().trim().escape(),
+  ];
+};
