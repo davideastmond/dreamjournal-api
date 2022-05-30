@@ -14,6 +14,18 @@ const userSchema = new Schema<IUser>(
     hashedPassword: { type: String, required: true },
     journalIds: { type: Schema.Types.Mixed, required: true, default: {} },
     jwToken: { type: String, default: "" },
+    security: {
+      isSet: { type: Boolean, default: false },
+      recoveryQuestions: {
+        type: [
+          {
+            question: { id: { type: String }, prompt: { type: String } },
+            answer: String,
+          },
+        ],
+        default: [],
+      },
+    },
   },
   {
     timestamps: true,
