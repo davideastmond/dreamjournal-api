@@ -8,13 +8,16 @@ import {
   checkIfSessionUser,
   getSecureUserProfile,
 } from "./middleware/get.user";
-import { createUserJournal } from "./middleware/user.journal.post";
-import { getJournalsForUserId } from "./middleware/user.journals.get";
-import { getAllJournalTagCountAnalytics } from "./middleware/user.journals.tags.analytics.get";
+import { getJournalsForUserId } from "./middleware/get.user.journals";
+import { getAllJournalTagCountAnalytics } from "./middleware/get.user.journals.tags.analytics";
+import { returnUsersSecurityQuestionsIfAny } from "./middleware/get.user.security";
 import {
-  updateFirstNameLastName,
   updatePasswordMiddleware,
-} from "./middleware/user.patch";
+  updateFirstNameLastName,
+} from "./middleware/patch.user";
+import { createUserJournal } from "./middleware/post.user.journal";
+import { putUserSecurityQuestionsOnUserDocument } from "./middleware/put.user.security";
+
 import {
   mongooseUserIdValidator,
   newJournalValidator,
@@ -88,4 +91,21 @@ router.patch(
   updateFirstNameLastName
 );
 
+router.get(
+  "/:userId/security",
+  validateAPIKey,
+  jwtVerifyMiddleWare,
+  mongooseUserIdValidator(),
+  validateRouteRequest,
+  returnUsersSecurityQuestionsIfAny
+);
+
+router.put(
+  "/:userId/security",
+  validateAPIKey,
+  jwtVerifyMiddleWare,
+  mongooseUserIdValidator(),
+  validateRouteRequest,
+  putUserSecurityQuestionsOnUserDocument
+);
 export default router;
