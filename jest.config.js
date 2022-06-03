@@ -4,4 +4,6 @@ module.exports = {
   transform: {
     "^.+\\.ts?$": "ts-jest",
   },
+  "coveragePathIgnorePatterns": ["<rootDir>/dist"],
+  "testPathIgnorePatterns": ["<rootDir>/dist"],
 };
