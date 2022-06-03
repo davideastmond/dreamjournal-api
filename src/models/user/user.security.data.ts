@@ -17,3 +17,24 @@ export const SECURITY_QUESTION_TEMPLATES: Array<TSecurityQuestionTemplate> = [
   { prompt: "What was your favorite food as a child?", id: "A7" },
   { prompt: "Where did you meet your spouse?", id: "A8" },
 ];
+
+export type TUserSecurityQuestionsPutRequestData = {
+  q0: {
+    selectedQuestionId: string;
+    selectedQuestionPrompt: string;
+    id: string;
+    response: string;
+  };
+  q1: {
+    selectedQuestionId: string;
+    selectedQuestionPrompt: string;
+    id: string;
+    response: string;
+  };
+  q2: {
+    selectedQuestionId: string;
+    selectedQuestionPrompt: string;
+    id: string;
+    response: string;
+  };
+};

@@ -1,6 +1,9 @@
 import { Document, Model } from "mongoose";
 import { IJournalDocument } from "../journal/journal.types";
-import { TSecurityQuestionTemplate } from "./user.security.data";
+import {
+  TSecurityQuestionTemplate,
+  TUserSecurityQuestionsPutRequestData,
+} from "./user.security.data";
 
 export interface IUser {
   email: string;
@@ -46,6 +49,9 @@ export interface IUserDocument extends IUser, Document {
     firstName: string;
     lastName: string;
   }) => Promise<IUserDocument>;
+  insertSecurityQuestionsForUser: (
+    data: TUserSecurityQuestionsPutRequestData
+  ) => Promise<void>;
 }
 export interface IUserModel extends Model<IUserDocument> {
   createUniqueUser: ({

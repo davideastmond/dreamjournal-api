@@ -21,6 +21,7 @@ import { putUserSecurityQuestionsOnUserDocument } from "./middleware/put.user.se
 import {
   mongooseUserIdValidator,
   newJournalValidator,
+  newSecurityQuestionsValidator,
   restrictedAccessToSessionUserData,
   userBasicProfileUpdateValidator,
   userPasswordUpdateValidator,
@@ -101,10 +102,11 @@ router.get(
 );
 
 router.put(
-  "/:userId/security",
+  "/:userId/profile/security",
   validateAPIKey,
   jwtVerifyMiddleWare,
   mongooseUserIdValidator(),
+  newSecurityQuestionsValidator(),
   validateRouteRequest,
   putUserSecurityQuestionsOnUserDocument
 );
