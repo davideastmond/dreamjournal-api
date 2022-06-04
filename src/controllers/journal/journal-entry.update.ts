@@ -14,6 +14,7 @@ export async function patchJournalEntryAttributes({
   journalEntryId,
 }: TJournalEntryAttributesPatchPackageData): Promise<TJournalAttributesReturnData> {
   const changes: TJournalFieldUpdateAction[] = [];
+  if (!journalEntryId) throw new Error("Missing a journal entry id");
   if (title && title.action) {
     if (title.action === "update") {
       await JournalModel.updateOne(

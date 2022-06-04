@@ -66,8 +66,50 @@ describe("journalEntry update", () => {
       const res = await mockJournal.journal.patchJournalEntryAttributes(
         updates
       );
-      console.log("res", res);
-      console.log(mockUser, mockJournal, mockEntry);
+
+      expect(res.actionsTaken[0].field).toBeDefined();
+      expect(res.actionsTaken.length).toBe(1);
+      expect(res.actionsTaken[0].field).toBe("title");
+      expect(res.actionsTaken[0].action).toBe("update");
+      expect(res.actionsTaken[0].data).toBe("1234NewData");
+    });
+    test("title update procedure missing journalId expect to throw | illegal delete procedure", async () => {
+      const updates = {
+        title: {
+          action: "update",
+          data: "1234NewData",
+        },
+      };
+      await expect(() =>
+        mockJournal.journal.patchJournalEntryAttributes(updates)
+      ).rejects.toThrow();
+
+      await expect(() =>
+        mockJournal.journal.patchJournalEntryAttributes({
+          ...updates,
+          title: { action: "delete", data: "blahblah" },
+          journalEntryId: mockEntry._id.toString(),
+        })
+      ).rejects.toThrow();
+    });
+  });
+
+  describe("tags test", () => {
+    test("tags updating properly", async () => {
+      const updates = {
+        tags: {
+          action: "update",
+          data: ["newTag", "threeTags"],
+        },
+        journalEntryId: mockEntry._id.toString(),
+      };
+      await mockJournal.journal.patchJournalEntryAttributes(updates);
+
+      console.log("mockJournal", mockJournal);
+      const refreshedJournal = await JournalModel.findById(
+        mockJournal.journal._id.toString()
+      );
+      console.log("refreshed journal", refreshedJournal);
     });
   });
 });
