@@ -93,7 +93,6 @@ export async function patchJournalEntryAttributes({
       });
     }
   }
-
   if (description && description.action) {
     if (description.action === "update") {
       await JournalModel.updateOne(
@@ -110,16 +109,16 @@ export async function patchJournalEntryAttributes({
         action: description.action,
         data: description.data,
       });
+    } else if (description.action === "delete") {
+      await JournalModel.updateOne(
+        { "journalEntries._id": journalEntryId },
+        { $set: { "journalEntries.$.description": "", updatedAt: new Date() } }
+      );
+      changes.push({
+        field: "description",
+        action: description.action,
+      });
     }
-  } else if (description && description.action === "delete") {
-    await JournalModel.updateOne(
-      { "journalEntries._id": journalEntryId },
-      { $set: { "journalEntries.$.description": "", updatedAt: new Date() } }
-    );
-    changes.push({
-      field: "description",
-      action: description.action,
-    });
   }
 
   if (photoUrl && photoUrl.action) {

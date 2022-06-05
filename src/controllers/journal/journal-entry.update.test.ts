@@ -1,6 +1,11 @@
 import { MongoMemoryServer } from "mongodb-memory-server";
 import mongoose from "mongoose";
 import { JournalModel } from "../../models/journal/journal.schema";
+import {
+  TNewJournalReturnData,
+  TUpdateAction,
+} from "../../models/journal/journal.types";
+import { IUserDocument } from "../../models/user/user.types";
 import { mongoTestOptions } from "../../test-helpers/mongo-test.config";
 import { getMockUser } from "../utils/mock-user";
 
@@ -23,11 +28,11 @@ afterEach(async () => {
 });
 
 describe("journalEntry update", () => {
-  let mockUser: any;
-  let mockJournal: any;
-  let mockEntry: any;
+  let mockUser: IUserDocument;
+  let mockJournal: TNewJournalReturnData;
   beforeEach(async () => {
-    mockUser = await getMockUser();
+    mockUser = await getMockUser("testEmailInstance@email.com");
+
     mockJournal = await JournalModel.createJournalForUserId({
       ownerId: mockUser._id.toString(),
       description: "some description",
@@ -46,19 +51,22 @@ describe("journalEntry update", () => {
       text: "hi immer noch",
       tags: [],
     });
-    mockEntry = await mockJournal.journal.addNewEntry({
-      title: "testTitle3",
-      description: "Apple",
-      text: "Wir sind Wir!",
-      tags: [],
-    });
   });
-
+  afterEach(() => {
+    jest.clearAllMocks();
+  });
   describe("Update title", () => {
     test("updates title", async () => {
+      const spy = jest.spyOn(JournalModel, "updateOne");
+      const mockEntry = await mockJournal.journal.addNewEntry({
+        title: "testTitle3",
+        description: "Apple",
+        text: "Wir sind Wir!",
+        tags: [],
+      });
       const updates = {
         title: {
-          action: "update",
+          action: "update" as TUpdateAction,
           data: "1234NewData",
         },
         journalEntryId: mockEntry._id.toString(),
@@ -66,7 +74,7 @@ describe("journalEntry update", () => {
       const res = await mockJournal.journal.patchJournalEntryAttributes(
         updates
       );
-
+      expect(spy).toBeCalled();
       expect(res.actionsTaken[0].field).toBeDefined();
       expect(res.actionsTaken.length).toBe(1);
       expect(res.actionsTaken[0].field).toBe("title");
@@ -74,14 +82,20 @@ describe("journalEntry update", () => {
       expect(res.actionsTaken[0].data).toBe("1234NewData");
     });
     test("title update procedure missing journalId expect to throw | illegal delete procedure", async () => {
+      const mockEntry = await mockJournal.journal.addNewEntry({
+        title: "testTitle3",
+        description: "Apple",
+        text: "Wir sind Wir!",
+        tags: [],
+      });
       const updates = {
         title: {
-          action: "update",
+          action: "update" as TUpdateAction,
           data: "1234NewData",
         },
       };
       await expect(() =>
-        mockJournal.journal.patchJournalEntryAttributes(updates)
+        mockJournal.journal.patchJournalEntryAttributes(updates as any)
       ).rejects.toThrow();
 
       await expect(() =>
@@ -92,24 +106,113 @@ describe("journalEntry update", () => {
         })
       ).rejects.toThrow();
     });
-  });
-
-  describe("tags test", () => {
     test("tags updating properly", async () => {
+      const mockEntry = await mockJournal.journal.addNewEntry({
+        title: "testTitle3",
+        description: "Apple",
+        text: "Wir sind Wir!",
+        tags: [],
+      });
+
       const updates = {
         tags: {
-          action: "update",
+          action: "update" as TUpdateAction,
           data: ["newTag", "threeTags"],
         },
         journalEntryId: mockEntry._id.toString(),
       };
-      await mockJournal.journal.patchJournalEntryAttributes(updates);
-
-      console.log("mockJournal", mockJournal);
-      const refreshedJournal = await JournalModel.findById(
-        mockJournal.journal._id.toString()
+      const res = await mockJournal.journal.patchJournalEntryAttributes(
+        updates
       );
-      console.log("refreshed journal", refreshedJournal);
+      expect(res.actionsTaken).toBeDefined();
+      expect(Array.isArray(res.actionsTaken)).toBe(true);
+      expect(res.actionsTaken[0].field).toBe("tags");
+      expect(res.actionsTaken[0].data).toEqual(updates.tags.data);
+    });
+    test("testing multi-operations deleting tags and updating text", async () => {
+      const mockEntry = await mockJournal.journal.addNewEntry({
+        title: "testTitle3",
+        description: "Apple",
+        text: "initial text",
+        tags: ["first", "second", "third"],
+      });
+      const updates = {
+        tags: {
+          action: "delete" as TUpdateAction,
+        },
+        text: {
+          action: "update" as TUpdateAction,
+          data: "new updated text",
+        },
+        journalEntryId: mockEntry._id.toString(),
+      };
+      const res = await mockJournal.journal.patchJournalEntryAttributes(
+        updates
+      );
+      expect(res.actionsTaken).toHaveLength(2);
+      expect(res.actionsTaken[0].action).toBe("delete");
+      expect(res.actionsTaken[1].action).toBe("update");
+      expect(res.actionsTaken[1].data).toBe("new updated text");
+    });
+    test("deleting text, description and photoUrl", async () => {
+      const mock = jest.spyOn(JournalModel, "updateOne");
+      const mockEntry = await mockJournal.journal.addNewEntry({
+        title: "testTitle3",
+        description: "Apple",
+        text: "initial text",
+        tags: ["first", "second", "third"],
+        photoUrl: "https://www.example.com/myimage.url",
+      });
+      const updates = {
+        text: {
+          action: "delete" as TUpdateAction,
+        },
+        description: {
+          action: "delete" as TUpdateAction,
+        },
+        photoUrl: {
+          action: "delete" as TUpdateAction,
+        },
+        journalEntryId: mockEntry._id.toString(),
+      };
+      const res = await mockJournal.journal.patchJournalEntryAttributes(
+        updates
+      );
+      expect(res.actionsTaken).toHaveLength(3);
+      const newUpdates = {
+        description: {
+          action: "update" as TUpdateAction,
+          data: "some new description",
+        },
+        photoUrl: {
+          action: "update" as TUpdateAction,
+          data: "https://www.example.com/new.jpg",
+        },
+        journalEntryId: mockEntry._id.toString(),
+      };
+      const res2 = await mockJournal.journal.patchJournalEntryAttributes(
+        newUpdates
+      );
+      expect(res2.actionsTaken).toHaveLength(2);
+      expect(mock).toHaveBeenCalledTimes(5);
+    });
+    test("empty actions reflect properly", async () => {
+      const mockEntry = await mockJournal.journal.addNewEntry({
+        title: "testTitle3",
+        description: "Apple",
+        text: "initial text",
+        tags: ["first", "second", "third"],
+        photoUrl: "https://www.example.com/myimage.url",
+      });
+      const updates: any = {
+        journalEntryId: mockEntry._id.toString(),
+      };
+      const res = await mockJournal.journal.patchJournalEntryAttributes(
+        updates
+      );
+      expect(res.actionsTaken[0].field).toBe("no changes");
+      expect(res.actionsTaken[0].action).toBeNull();
+      expect(res.journal).toBeNull();
     });
   });
 });
