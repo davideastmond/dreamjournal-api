@@ -60,7 +60,7 @@ export type TJournalAttributesPatchPackageData = {
 };
 export type TJournalEntryAttributesPatchPackageData =
   TJournalAttributesPatchPackageData & {
-    text: TPatchData;
+    text?: TPatchData;
     journalEntryId: string;
   };
 
