@@ -84,8 +84,5 @@ describe("Search utility tests - Journals", () => {
     const tagQuery = new QuerySearch("tag2");
     const tagQueryResults = await tagQuery.getResults();
     expect(tagQueryResults.journals.length).toBe(2);
-
-    const entriesQuery = new QuerySearch("crashing");
-    const entriesResults = await entriesQuery.getResults();
   });
 });
