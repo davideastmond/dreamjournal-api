@@ -87,6 +87,5 @@ describe("Search utility tests - Journals", () => {
 
     const entriesQuery = new QuerySearch("crashing");
     const entriesResults = await entriesQuery.getResults();
-    console.log(entriesResults);
   });
 });

@@ -78,7 +78,6 @@ describe("tag analytics tests", () => {
 
     const obj = testJournal.getTagAggregator();
     expect(obj.tags.length).toBe(11);
-    console.log(obj.getAggregation());
   });
   test("aggregation tallies are working", async () => {
     const mockUser = await UserModel.createUniqueUser({
