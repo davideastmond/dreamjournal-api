@@ -57,4 +57,14 @@ describe("User find own journal tests", () => {
       journal3.journal._id.toString()
     );
   });
+  test("returns empty array when there are no journalIds on the user document", async () => {
+    const mockUser = await UserModel.createUniqueUser({
+      firstName: "fn",
+      lastName: "ln",
+      email: "email@email.com",
+      plainTextPassword: "pwd123",
+    });
+    const res = await mockUser.getAllJournals();
+    expect(res).toEqual([]);
+  });
 });
