@@ -11,8 +11,11 @@ import {
 export class QuerySearch {
   private readonly queryString: string;
   private results: TSearchResults;
-  constructor(queryString: string) {
+  private readonly userId: string;
+  private nonIndexedResults: boolean;
+  constructor(queryString: string, forUserId: string) {
     this.queryString = queryString;
+    this.userId = forUserId;
     this.results = {
       queryString: queryString,
       journalEntries: [],
@@ -22,7 +25,10 @@ export class QuerySearch {
 
   public async getResults() {
     await this.getJournalMatches();
-    return this.results;
+    if (!this.nonIndexedResults) {
+      return this.results;
+    }
+    return { ...this.results, otherInfo: "non-index result" };
   }
 
   private async getJournalMatches() {
@@ -30,7 +36,13 @@ export class QuerySearch {
     const indexedMatches = await this.getIndexedJournalMatches();
     const entryQueries =
       this.getJournalEntriesFromJournalMatchResults(indexedMatches);
-    const journalEntryQueryResults = this.queryJournalEntries(entryQueries);
+
+    let journalEntryQueryResults;
+    if (entryQueries.length > 0) {
+      journalEntryQueryResults = this.queryJournalEntries(entryQueries);
+    } else {
+      journalEntryQueryResults = await this.getFallBackJournalEntryMatches();
+    }
     this.results.journals = [...tagMatches, ...indexedMatches];
     this.results.journalEntries = journalEntryQueryResults;
   }
@@ -39,25 +51,31 @@ export class QuerySearch {
     Array<TJournalMatchResult>
   > {
     const query = { "$search": this.queryString };
-    const results = await JournalModel.find({
-      "$text": query,
-    });
-
-    if (results && results.length && results.length > 0) {
-      return results.map((result: IJournalDocument) => {
-        return {
-          journal: result,
-          matchedBy: result.title
-            .toLowerCase()
-            .includes(this.queryString.toLowerCase())
-            ? MatchingCriteria.JournalTitle
-            : result.description
-                .toLowerCase()
-                .includes(this.queryString.toLowerCase())
-            ? MatchingCriteria.JournalDescription
-            : MatchingCriteria.Default,
-        };
+    try {
+      const results = await JournalModel.find({
+        "$text": query,
+        ownerId: this.userId,
       });
+
+      if (results && results.length && results.length > 0) {
+        return results.map((result: IJournalDocument) => {
+          return {
+            journal: result,
+            matchedBy: result.title
+              .toLowerCase()
+              .includes(this.queryString.toLowerCase())
+              ? MatchingCriteria.JournalTitle
+              : result.description
+                  .toLowerCase()
+                  .includes(this.queryString.toLowerCase())
+              ? MatchingCriteria.JournalDescription
+              : MatchingCriteria.Default,
+          };
+        });
+      }
+    } catch (exception) {
+      this.nonIndexedResults = true;
+      return [];
     }
     return [];
   }
@@ -89,6 +107,26 @@ export class QuerySearch {
     return entries;
   }
 
+  private async getFallBackJournalEntryMatches() {
+    const journals = await JournalModel.find({
+      ownerId: this.userId,
+    });
+    if (!journals || journals.length === 0) return [];
+    const entries = this.getEntriesFromArrayOfJournals(journals);
+    return this.queryJournalEntries(entries);
+  }
+
+  private getEntriesFromArrayOfJournals(
+    journals: IJournalDocument[]
+  ): IJournalEntry[] {
+    const entries: IJournalEntry[] = [];
+    for (let journal of journals) {
+      for (let journalEntry of journal.journalEntries) {
+        if (journalEntry) entries.push(journalEntry);
+      }
+    }
+    return entries;
+  }
   private queryJournalEntries(
     entries: IJournalEntry[]
   ): TJournalEntryMatchResult[] {

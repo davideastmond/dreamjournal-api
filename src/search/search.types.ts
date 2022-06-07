@@ -5,6 +5,7 @@ export type TSearchResults = {
   queryString: string;
   journals: Array<TJournalMatchResult>;
   journalEntries: Array<TJournalEntryMatchResult>;
+  otherInfo?: string;
 };
 
 export type TJournalMatchResult = {
