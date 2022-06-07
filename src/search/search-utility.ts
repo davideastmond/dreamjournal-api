@@ -31,7 +31,6 @@ export class QuerySearch {
     const entryQueries =
       this.getJournalEntriesFromJournalMatchResults(indexedMatches);
     const journalEntryQueryResults = this.queryJournalEntries(entryQueries);
-    // const adaptedEntries = this.adaptJournalEntriesToEntryResults(journalEntryQueryResults)
     this.results.journals = [...tagMatches, ...indexedMatches];
     this.results.journalEntries = journalEntryQueryResults;
   }

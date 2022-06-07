@@ -6,4 +6,5 @@ module.exports = {
   },
   "coveragePathIgnorePatterns": ["<rootDir>/dist"],
   "testPathIgnorePatterns": ["<rootDir>/dist"],
+  "setupFilesAfterEnv": ["./jest.setup.js"],
 };
