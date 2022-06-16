@@ -34,7 +34,9 @@ export interface IJournalDocument extends IJournal, Document {
     photoUrl?: string;
     tags: string[];
   }) => Promise<IJournalDocument>;
-  deleteEntry: (journalEntryId: string) => Promise<IJournalDocument>;
+  deleteEntry: (
+    journalEntryId: string
+  ) => Promise<TJournalEntryDeleteResponseData>;
   patchJournalEntryAttributes: ({
     title,
     tags,
@@ -58,7 +60,7 @@ export type TJournalAttributesPatchPackageData = {
 };
 export type TJournalEntryAttributesPatchPackageData =
   TJournalAttributesPatchPackageData & {
-    text: TPatchData;
+    text?: TPatchData;
     journalEntryId: string;
   };
 

@@ -5,6 +5,7 @@ import mongoose from "mongoose";
 
 import { mongoTestOptions } from "../../test-helpers/mongo-test.config";
 import { IJournalEntry } from "../../models/journalEntry/journal-entry.types";
+import { countTags } from "./tag-analytics";
 
 const options = mongoTestOptions;
 let mongoServer: any;
@@ -77,7 +78,6 @@ describe("tag analytics tests", () => {
 
     const obj = testJournal.getTagAggregator();
     expect(obj.tags.length).toBe(11);
-    console.log(obj.getAggregation());
   });
   test("aggregation tallies are working", async () => {
     const mockUser = await UserModel.createUniqueUser({
@@ -130,5 +130,15 @@ describe("tag analytics tests", () => {
     await testJournal.save();
     const stats = testJournal.getTagAggregator().getAggregation();
     expect(stats["arg"]).toBe(3);
+  });
+
+  test("count tags works properly", () => {
+    const mockTags = ["t1", "t1", "t2", "t3", "t3", "t3"];
+    const res = countTags(mockTags);
+    expect(res).toEqual({
+      t1: 2,
+      t2: 1,
+      t3: 3,
+    });
   });
 });

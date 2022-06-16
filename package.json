@@ -11,6 +11,7 @@
     "dev": "NODE_ENV=development nodemon",
     "test": "NODE_ENV=test npx jest",
     "test:coverage": "NODE_ENV=test npx jest --coverage -w",
+    "test:watch": "jest --watch",
     "typecheck": "npm run tsc && rm -r ./dist",
     "prepare": "husky install"
   },

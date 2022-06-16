@@ -15,4 +15,9 @@ describe("crypto hashing tests", () => {
       checkPassword({ hashedPassword, plainTextPassword: "some other value" })
     ).resolves.toBe(false);
   });
+
+  test("hashing - function throw error", async () => {
+    const password: null = null;
+    await expect(() => hashPassword({ password })).rejects.toThrow();
+  });
 });
