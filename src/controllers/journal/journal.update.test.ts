@@ -1,6 +1,7 @@
 import { MongoMemoryServer } from "mongodb-memory-server";
 import mongoose from "mongoose";
 import { JournalModel } from "../../models/journal/journal.schema";
+import { TUpdateAction } from "../../models/journal/journal.types";
 
 import { mongoTestOptions } from "../../test-helpers/mongo-test.config";
 import { getMockUser } from "../utils/mock-user";
@@ -89,6 +90,38 @@ describe("journal attributes patch tests", () => {
         { "action": null, "field": "no changes" },
       ]);
       expect(patchData.journal).toBeNull();
+    });
+    test("delete actions on tags, description, photo update | title action is invalid -> expect to throw", async () => {
+      const dummyUser = await getMockUser();
+      const journal = await JournalModel.createJournalForUserId({
+        ownerId: dummyUser._id.toString(),
+        title: "journal1",
+        description: "desc journal1",
+        photoUrl: "http://www.zone.com/photo.jpg",
+      });
+      const actions = {
+        tags: {
+          action: "delete" as TUpdateAction,
+        },
+        description: {
+          action: "delete" as TUpdateAction,
+        },
+        photoUrl: {
+          action: "update" as TUpdateAction,
+          data: "https://www.zone.com/be.bmp",
+        },
+      };
+      const res = await journal.journal.patchJournalAttributes(actions);
+      expect(res.actionsTaken.length).toBe(3);
+
+      const additionalActions = {
+        title: {
+          action: "delete" as TUpdateAction,
+        },
+      };
+      await expect(() =>
+        journal.journal.patchJournalAttributes(additionalActions)
+      ).rejects.toThrow();
     });
   });
 });

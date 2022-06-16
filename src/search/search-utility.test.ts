@@ -39,28 +39,14 @@ describe("Search utility tests - Journals", () => {
         description: "test-unique-id",
         tags: ["abc", "tag2"],
         title: "E pluribus unum",
-        journalEntries: [
-          {
-            title: "super california",
-            tags: ["arg", "nature walk park"],
-          },
-        ],
+        journalEntries: [] as any[],
       },
       {
         ownerId: mockUser._id.toString(),
         description: "some description",
         tags: ["ghi", "klm"],
         title: "Seven long years",
-        journalEntries: [
-          {
-            title: "In case there were waves on the crashing",
-            tags: ["Spencer", "Publications", "Milestone"],
-          },
-          {
-            title: "Interesting squirrel used for bat pitcher",
-            tags: ["Rodent", "sewer", "climbing"],
-          },
-        ],
+        journalEntries: [] as any[],
       },
       {
         ownerId: mockUser._id.toString(),
@@ -69,24 +55,70 @@ describe("Search utility tests - Journals", () => {
         title: "unum court case",
       },
     ];
+
     await Promise.all(
       testJournals.map((j) => JournalModel.createJournalForUserId(j))
     );
 
-    await JournalModel.find();
-    const query = new QuerySearch("pluribus");
+    const journals = await JournalModel.find();
+    const mockJournalEntries = [
+      {
+        title: "super california",
+        tags: ["arg", "nature walk park"],
+        text: "something",
+        description: "some other type of description",
+      },
+      {
+        title: "In case there were waves on the crashing tag2",
+        tags: ["Spencer", "Publications", "Milestone"],
+        text: "description",
+        description: "null",
+      },
+      {
+        title: "Interesting squirrel used for bat pitcher",
+        tags: ["Rodent", "sewer", "climbing", "description"],
+        text: "null",
+        ownerId: mockUser._id.toString(),
+      },
+    ] as any[];
+    await journals[0].addNewEntry(mockJournalEntries[0]);
+    await journals[1].addNewEntry(mockJournalEntries[1]);
+    await journals[1].addNewEntry(mockJournalEntries[2]);
+
+    const query = new QuerySearch("pluribus", mockUser._id.toString());
     const results = await query.getResults();
     expect(results.journals.length).toBe(1);
     expect(results.journals[0].journal.description).toBe("test-unique-id");
     expect(results.journals[0].journal.title).toBe("E pluribus unum");
     expect(results.queryString).toBe("pluribus");
 
-    const tagQuery = new QuerySearch("tag2");
+    const tagQuery = new QuerySearch("tag2", mockUser._id.toString());
     const tagQueryResults = await tagQuery.getResults();
-    expect(tagQueryResults.journals.length).toBe(2);
+    expect(tagQueryResults.journals.length).toBe(3);
+    expect(tagQueryResults.journalEntries[0].matchedBy).toBe(
+      "journalEntryTitle"
+    );
 
-    const entriesQuery = new QuerySearch("crashing");
-    const entriesResults = await entriesQuery.getResults();
-    console.log(entriesResults);
+    const otherQuery = new QuerySearch("description", mockUser._id.toString());
+    const additionalResults = await otherQuery.getResults();
+    expect(additionalResults.journalEntries).toHaveLength(3);
+    expect(additionalResults.journalEntries[0].matchedBy).toBe(
+      "journalEntryText"
+    );
+    expect(additionalResults.journalEntries[1].matchedBy).toBe(
+      "journalEntryTags"
+    );
+    expect(additionalResults.journalEntries[2].matchedBy).toBe(
+      "journalEntryDescription"
+    );
+
+    // Drop the indexes and force a manual search
+    await JournalModel.collection.dropIndexes();
+    const yetAnotherQuery = new QuerySearch(
+      "description",
+      mockUser._id.toString()
+    );
+    const moreResults = await yetAnotherQuery.getResults();
+    expect(moreResults.otherInfo).toBe("non-index result");
   });
 });

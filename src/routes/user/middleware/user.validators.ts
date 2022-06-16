@@ -1,7 +1,11 @@
-import { checkSchema, param } from "express-validator";
+import { body, checkSchema, param } from "express-validator";
 import { NextFunction, Request, Response } from "express";
 import mongoose from "mongoose";
 import { isURLValid } from "../../../utils/string-validation/url-valid";
+import { SECURITY_QUESTION_TEMPLATES } from "../../../models/user/user.security.data";
+
+const SECURITY_IDS = SECURITY_QUESTION_TEMPLATES.map((template) => template.id);
+const MINIMUM_RESPONSE_CHARACTER_COUNT = 4;
 
 export const mongooseUserIdValidator = (): any[] => {
   return [
@@ -99,3 +103,99 @@ export function newJournalValidator(): any {
     }),
   ];
 }
+
+export const userPasswordUpdateValidator = (): any[] => {
+  return [body("password").exists().trim().escape()];
+};
+
+export const userBasicProfileUpdateValidator = (): any[] => {
+  return [
+    body("firstName").exists().trim().escape(),
+    body("lastName").exists().trim().escape(),
+  ];
+};
+
+export const newSecurityQuestionsValidator = (): any[] => {
+  return [
+    checkSchema({
+      "q0": {
+        exists: true,
+        errorMessage: "q0 parameter must exist and be a string",
+      },
+      "q0.selectedQuestionId": {
+        exists: true,
+        custom: {
+          options: (value) => {
+            return SECURITY_IDS.includes(value);
+          },
+        },
+      },
+      "q0.selectedQuestionPrompt": {
+        exists: true,
+      },
+      "q0.id": {
+        exists: true,
+      },
+      "q0.response": {
+        trim: true,
+        escape: true,
+        isLength: {
+          options: [{ min: MINIMUM_RESPONSE_CHARACTER_COUNT }],
+          errorMessage: `Response length for q0 should be at least ${MINIMUM_RESPONSE_CHARACTER_COUNT} characters`,
+        },
+      },
+      q1: {
+        exists: true,
+        errorMessage: "q1 parameter must exist and be a string",
+      },
+      "q1.selectedQuestionId": {
+        exists: true,
+        custom: {
+          options: (value) => {
+            return SECURITY_IDS.includes(value);
+          },
+        },
+      },
+      "q1.selectedQuestionPrompt": {
+        exists: true,
+      },
+      "q1.id": {
+        exists: true,
+      },
+      "q1.response": {
+        escape: true,
+        isLength: {
+          options: [{ min: MINIMUM_RESPONSE_CHARACTER_COUNT }],
+          errorMessage: `Response length for q1 should be at least ${MINIMUM_RESPONSE_CHARACTER_COUNT} characters`,
+        },
+      },
+      q2: {
+        exists: true,
+        errorMessage: "q2 parameter must exist and be a string",
+      },
+      "q2.selectedQuestionId": {
+        exists: true,
+        custom: {
+          options: (value) => {
+            return SECURITY_IDS.includes(value);
+          },
+        },
+      },
+      "q2.selectedQuestionPrompt": {
+        exists: true,
+      },
+      "q2.id": {
+        exists: true,
+      },
+      "q2.response": {
+        isString: true,
+        trim: true,
+        escape: true,
+        isLength: {
+          options: [{ min: MINIMUM_RESPONSE_CHARACTER_COUNT }],
+          errorMessage: `Response length for q2 should be at least ${MINIMUM_RESPONSE_CHARACTER_COUNT} characters`,
+        },
+      },
+    }),
+  ];
+};

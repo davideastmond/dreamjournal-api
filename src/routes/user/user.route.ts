@@ -8,13 +8,23 @@ import {
   checkIfSessionUser,
   getSecureUserProfile,
 } from "./middleware/get.user";
-import { createUserJournal } from "./middleware/user.journal.post";
-import { getJournalsForUserId } from "./middleware/user.journals.get";
-import { getAllJournalTagCountAnalytics } from "./middleware/user.journals.tags.analytics.get";
+import { getJournalsForUserId } from "./middleware/get.user.journals";
+import { getAllJournalTagCountAnalytics } from "./middleware/get.user.journals.tags.analytics";
+import { returnUsersSecurityQuestionsIfAny } from "./middleware/get.user.security";
+import {
+  updatePasswordMiddleware,
+  updateFirstNameLastName,
+} from "./middleware/patch.user";
+import { createUserJournal } from "./middleware/post.user.journal";
+import { putUserSecurityQuestionsOnUserDocument } from "./middleware/put.user.security";
+
 import {
   mongooseUserIdValidator,
   newJournalValidator,
+  newSecurityQuestionsValidator,
   restrictedAccessToSessionUserData,
+  userBasicProfileUpdateValidator,
+  userPasswordUpdateValidator,
 } from "./middleware/user.validators";
 const router = express.Router();
 
@@ -63,10 +73,41 @@ router.post(
   createUserJournal
 );
 
-// Update a specific journal entry on a specific journal
-router.patch("/:userId/journals/:journalId/:journalEntryId");
+router.patch(
+  "/:userId/profile/secure",
+  validateAPIKey,
+  mongooseUserIdValidator(),
+  userPasswordUpdateValidator(),
+  validateRouteRequest,
+  updatePasswordMiddleware
+);
 
-// Delete a specific journal entry on a specific journal
-router.delete("/:userId/journals/:journalId/:journalEntryId");
+router.patch(
+  "/:userId/profile/basic",
+  validateAPIKey,
+  jwtVerifyMiddleWare,
+  mongooseUserIdValidator(),
+  userBasicProfileUpdateValidator(),
+  validateRouteRequest,
+  updateFirstNameLastName
+);
 
+router.get(
+  "/:userId/security",
+  validateAPIKey,
+  jwtVerifyMiddleWare,
+  mongooseUserIdValidator(),
+  validateRouteRequest,
+  returnUsersSecurityQuestionsIfAny
+);
+
+router.put(
+  "/:userId/profile/security",
+  validateAPIKey,
+  jwtVerifyMiddleWare,
+  mongooseUserIdValidator(),
+  newSecurityQuestionsValidator(),
+  validateRouteRequest,
+  putUserSecurityQuestionsOnUserDocument
+);
 export default router;

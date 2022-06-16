@@ -23,7 +23,7 @@ afterEach(async () => {
 });
 
 describe("create new journal tests", () => {
-  test("creates new journal successfully", async () => {
+  test("creates new journal successfully | throws if invalid ownerId", async () => {
     const mockUser = await UserModel.createUniqueUser({
       email: "hi@email.com",
       firstName: "f",
@@ -43,5 +43,31 @@ describe("create new journal tests", () => {
     expect(result.journal.title).toBe("my journal");
     expect(result.journal.tags.length).toBe(2);
     expect(result.journal.tags[1]).toBe("tag2");
+
+    const fakeUserId = new mongoose.Types.ObjectId().toString();
+    await expect(() =>
+      JournalModel.createJournalForUserId({
+        ownerId: fakeUserId,
+        description: "some description",
+        tags: ["tag1", "tag2"],
+        title: "my journal",
+      })
+    ).rejects.toThrow();
+  });
+  test("throws if duplicate user id email", async () => {
+    await UserModel.createUniqueUser({
+      email: "unique@email.com",
+      firstName: "f",
+      lastName: "ln",
+      plainTextPassword: "pwd1234565",
+    });
+    await expect(() =>
+      UserModel.createUniqueUser({
+        email: "unique@email.com",
+        firstName: "otherfn",
+        lastName: "otherln",
+        plainTextPassword: "pwd1234565",
+      })
+    ).rejects.toThrow();
   });
 });
