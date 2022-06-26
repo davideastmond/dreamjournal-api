@@ -16,6 +16,7 @@ export class JWTokenManager {
   private static readonly JWT_SECRET: string = IS_PRODUCTION
     ? process.env.PRODUCTION_JSON_SECRET
     : process.env.DEV_JSON_SECRET;
+
   private static readonly tokenAlgorithm: string = "HS256";
   public static async encodeSession(
     partialSession: TPartialTokenSession
