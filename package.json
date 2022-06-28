@@ -6,7 +6,7 @@
   "scripts": {
     "tsc": "tsc",
     "build": "npm run tsc",
-    "start": "node dist/server.js",
+    "start": "node dist/start.js",
     "watch-tsc": "tsc -w",
     "dev": "NODE_ENV=development nodemon",
     "test": "NODE_ENV=test npx jest",
@@ -46,6 +46,7 @@
     "@types/jest": "^27.4.1",
     "@types/mongoose": "^5.11.97",
     "@types/passport": "^1.0.7",
+    "@types/supertest": "^2.0.12",
     "dotenv": "^16.0.0",
     "husky": "^7.0.4",
     "jest": "^27.5.1",
