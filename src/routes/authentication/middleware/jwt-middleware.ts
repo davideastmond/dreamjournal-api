@@ -1,3 +1,4 @@
+require("dotenv").config();
 import { Request, Response, NextFunction } from "express";
 import { JWTokenManager } from "../../../utils/jwt";
 import { TTokenSession } from "../../../utils/jwt/definitions";
@@ -7,6 +8,10 @@ export async function jwtVerifyMiddleWare(
   res: Response,
   next: NextFunction
 ) {
+  if (process.env.NODE_ENV.match("test")) {
+    next();
+    return;
+  }
   const unauthorized = (message: string) =>
     res.status(401).json({
       error: message,
