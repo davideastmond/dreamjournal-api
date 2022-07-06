@@ -17,7 +17,6 @@ const httpServer = createServer(app);
 if (IS_PRODUCTION) {
   app.set("trust proxy", 1);
 }
-console.log("Production mode?", IS_PRODUCTION);
 app.use(cookieParser());
 app.use(
   cors({
@@ -39,11 +38,5 @@ app.use("/api/auth", authenticationRouter);
 app.use("/api/user", userRouter);
 app.use("/api/journal", journalRouter);
 app.use("/api/search", searchRouter);
-
-// const server = app.listen(port, () =>
-//   console.log(`Server started on port ${port}`)
-// );
-
-// connectDB();
 
 export default httpServer;
