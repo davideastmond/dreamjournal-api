@@ -1,7 +1,6 @@
 import { Request, Response } from "express";
 import { UserModel } from "../../../models/user/user.schema";
 import { IUserDocument } from "../../../models/user/user.types";
-
 export const returnUsersSecurityQuestionsIfAny = async (
   req: Request,
   res: Response
