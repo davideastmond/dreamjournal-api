@@ -24,5 +24,6 @@ export async function createTwilioTextMessage(messageData: TMessageData) {
     console.log(message);
   } catch (exception: any) {
     console.log(exception.message);
+    throw new Error(exception.message);
   }
 }

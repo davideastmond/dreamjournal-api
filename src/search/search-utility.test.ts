@@ -87,7 +87,6 @@ describe("Search utility tests - Journals", () => {
 
     const query = new QuerySearch("pluribus", mockUser._id.toString());
     const results = await query.getResults();
-    console.log("RESULTS 91", results);
     expect(results.journals.length).toBe(1);
     expect(results.journals[0].journal.description).toBe("test-unique-id");
     expect(results.journals[0].journal.title).toBe("E pluribus unum");
