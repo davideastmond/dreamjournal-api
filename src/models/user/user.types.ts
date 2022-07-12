@@ -21,6 +21,7 @@ export interface IUser {
       enabled: boolean;
       userCtn: string | null;
       userCtnVerified: boolean;
+      authCode: string | null;
       token: string | null;
       tokenCreated: Date | null;
       tokenExpires: Date | null;
