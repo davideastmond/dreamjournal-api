@@ -42,7 +42,6 @@ export const generateAndSendToken = async (req: Request, res: Response) => {
       const partialSession: TPartialTokenSession = {
         _id: user._id.toString(),
         email: user.email,
-        createdAt: Date.now(),
       };
       const session = await JWTokenManager.encodeSession(partialSession);
       user.jwToken = session.token;

@@ -23,8 +23,8 @@ export interface IUser {
       userCtnVerified: boolean;
       authCode: string | null;
       token: string | null;
-      tokenCreated: Date | null;
-      tokenExpires: Date | null;
+      tokenCreatedAt: number | null;
+      tokenExpiresAt: number | null;
     };
   };
 }

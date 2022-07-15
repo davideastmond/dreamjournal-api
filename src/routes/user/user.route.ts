@@ -19,6 +19,7 @@ import {
   updateFirstNameLastName,
 } from "./middleware/patch.user";
 import { createUserJournal } from "./middleware/post.user.journal";
+import { enrollTwoFactorAuthentication } from "./middleware/post.user.security.tfa";
 import { putUserSecurityQuestionsOnUserDocument } from "./middleware/put.user.security";
 
 import {
@@ -28,6 +29,7 @@ import {
   restrictedAccessToSessionUserData,
   userBasicProfileUpdateValidator,
   userPasswordUpdateValidator,
+  twoFactorAuthCTNBodyValidator,
 } from "./middleware/user.validators";
 const router = express.Router();
 
@@ -126,5 +128,16 @@ router.get(
   validateRouteRequest,
   restrictedAccessToSessionUserData,
   getTwoFactorAuthStatus
+);
+
+router.post(
+  "/:userId/profile/security/tfa/enroll",
+  validateAPIKey,
+  jwtVerifyMiddleWare,
+  mongooseUserIdValidator(),
+  twoFactorAuthCTNBodyValidator(),
+  validateRouteRequest,
+  restrictedAccessToSessionUserData,
+  enrollTwoFactorAuthentication
 );
 export default router;
