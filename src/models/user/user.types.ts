@@ -17,6 +17,15 @@ export interface IUser {
   security: {
     isSet: boolean;
     recoveryQuestions: Array<TSecurityQuestion>;
+    twoFactorAuthentication: {
+      enabled: boolean;
+      userCtn: string | null;
+      userCtnVerified: boolean;
+      authCode: string | null;
+      token: string | null;
+      tokenCreatedAt: number | null;
+      tokenExpiresAt: number | null;
+    };
   };
 }
 

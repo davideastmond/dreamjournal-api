@@ -28,6 +28,15 @@ const userSchema = new Schema<IUser>(
         ],
         default: [],
       },
+      twoFactorAuthentication: {
+        enabled: { type: Boolean, default: false },
+        userCtn: { type: String, default: null },
+        userCtnVerified: { type: Boolean, default: false },
+        authCode: { type: String, default: null },
+        token: { type: String, default: null },
+        tokenCreatedAt: { type: Number, default: null },
+        tokenExpiresAt: { type: Number, default: null },
+      },
     },
   },
   {

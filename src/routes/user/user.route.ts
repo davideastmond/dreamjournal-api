@@ -10,12 +10,16 @@ import {
 } from "./middleware/get.user";
 import { getJournalsForUserId } from "./middleware/get.user.journals";
 import { getAllJournalTagCountAnalytics } from "./middleware/get.user.journals.tags.analytics";
-import { returnUsersSecurityQuestionsIfAny } from "./middleware/get.user.security";
+import {
+  getTwoFactorAuthStatus,
+  returnUsersSecurityQuestionsIfAny,
+} from "./middleware/get.user.security";
 import {
   updatePasswordMiddleware,
   updateFirstNameLastName,
 } from "./middleware/patch.user";
 import { createUserJournal } from "./middleware/post.user.journal";
+import { enrollTwoFactorAuthentication } from "./middleware/post.user.security.tfa";
 import { putUserSecurityQuestionsOnUserDocument } from "./middleware/put.user.security";
 
 import {
@@ -25,6 +29,7 @@ import {
   restrictedAccessToSessionUserData,
   userBasicProfileUpdateValidator,
   userPasswordUpdateValidator,
+  twoFactorAuthCTNBodyValidator,
 } from "./middleware/user.validators";
 const router = express.Router();
 
@@ -79,6 +84,7 @@ router.patch(
   mongooseUserIdValidator(),
   userPasswordUpdateValidator(),
   validateRouteRequest,
+  restrictedAccessToSessionUserData,
   updatePasswordMiddleware
 );
 
@@ -89,6 +95,7 @@ router.patch(
   mongooseUserIdValidator(),
   userBasicProfileUpdateValidator(),
   validateRouteRequest,
+  restrictedAccessToSessionUserData,
   updateFirstNameLastName
 );
 
@@ -98,6 +105,7 @@ router.get(
   jwtVerifyMiddleWare,
   mongooseUserIdValidator(),
   validateRouteRequest,
+  restrictedAccessToSessionUserData,
   returnUsersSecurityQuestionsIfAny
 );
 
@@ -108,6 +116,28 @@ router.put(
   mongooseUserIdValidator(),
   newSecurityQuestionsValidator(),
   validateRouteRequest,
+  restrictedAccessToSessionUserData,
   putUserSecurityQuestionsOnUserDocument
+);
+
+router.get(
+  "/:userId/profile/security/two_factor_status",
+  validateAPIKey,
+  jwtVerifyMiddleWare,
+  mongooseUserIdValidator(),
+  validateRouteRequest,
+  restrictedAccessToSessionUserData,
+  getTwoFactorAuthStatus
+);
+
+router.post(
+  "/:userId/profile/security/tfa/enroll",
+  validateAPIKey,
+  jwtVerifyMiddleWare,
+  mongooseUserIdValidator(),
+  twoFactorAuthCTNBodyValidator(),
+  validateRouteRequest,
+  restrictedAccessToSessionUserData,
+  enrollTwoFactorAuthentication
 );
 export default router;

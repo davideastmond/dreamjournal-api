@@ -35,34 +35,27 @@ export const generateAndSendToken = async (req: Request, res: Response) => {
         plainTextPassword: password,
       });
       if (!passwordResult)
-        return res
-          .status(401)
-          .send({
-            error:
-              "Authentication error: please check the email address and password combination.",
-          });
-
-      // Get a session
+        return res.status(401).send({
+          error:
+            "Authentication error: please check the email address and password combination.",
+        });
       const partialSession: TPartialTokenSession = {
         _id: user._id.toString(),
         email: user.email,
-        createdAt: Date.now(),
       };
       const session = await JWTokenManager.encodeSession(partialSession);
       user.jwToken = session.token;
       await user.save();
       return res.status(200).send(session);
     } else {
-      return res
-        .status(401)
-        .send({
-          error:
-            "Authentication error: please verify you have entered correct credentials",
-        });
+      return res.status(401).send({
+        error:
+          "Authentication error: Please verify you have entered correct credentials",
+      });
     }
   } catch (err) {
     return res.status(401).send({
-      error: "Not authorized",
+      error: "Server error: We're unable to create an authentication session",
     });
   }
 };

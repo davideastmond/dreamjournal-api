@@ -56,7 +56,6 @@ export class QuerySearch {
         "$text": query,
         ownerId: this.userId,
       });
-
       if (results && results.length && results.length > 0) {
         return results.map((result: IJournalDocument) => {
           return {
@@ -99,9 +98,15 @@ export class QuerySearch {
     results: TJournalMatchResult[]
   ): IJournalEntry[] {
     const entries: IJournalEntry[] = [];
+
     for (let journalMatch of results) {
-      for (let e of journalMatch.journal.journalEntries) {
-        entries.push(e);
+      if (
+        journalMatch.journal.journalEntries &&
+        journalMatch.journal.journalEntries.length > 0
+      ) {
+        for (let e of journalMatch.journal.journalEntries) {
+          entries.push(e);
+        }
       }
     }
     return entries;
@@ -121,8 +126,10 @@ export class QuerySearch {
   ): IJournalEntry[] {
     const entries: IJournalEntry[] = [];
     for (let journal of journals) {
-      for (let journalEntry of journal.journalEntries) {
-        if (journalEntry) entries.push(journalEntry);
+      if (journal.journalEntries && journal.journalEntries.length > 0) {
+        for (let journalEntry of journal.journalEntries) {
+          if (journalEntry) entries.push(journalEntry);
+        }
       }
     }
     return entries;

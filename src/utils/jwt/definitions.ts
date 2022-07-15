@@ -3,7 +3,6 @@ export type TTokenizedObject = { email: string; iat: number; exp: number };
 export type TTokenSession = {
   _id: string;
   email: string;
-  createdAt: number;
   issued: number;
   expires: number;
 };

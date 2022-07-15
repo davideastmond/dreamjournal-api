@@ -3,6 +3,7 @@ import { NextFunction, Request, Response } from "express";
 import mongoose from "mongoose";
 import { isURLValid } from "../../../utils/string-validation/url-valid";
 import { SECURITY_QUESTION_TEMPLATES } from "../../../models/user/user.security.data";
+import { isPhoneNumberValid } from "../../../controllers/two-factor-authentication-controller/utils";
 
 const SECURITY_IDS = SECURITY_QUESTION_TEMPLATES.map((template) => template.id);
 const MINIMUM_RESPONSE_CHARACTER_COUNT = 4;
@@ -26,6 +27,10 @@ export const restrictedAccessToSessionUserData = async (
   next: NextFunction
 ) => {
   const { userId } = req.params;
+  if (process.env.NODE_ENV.match("test")) {
+    next();
+    return;
+  }
   if (!userId)
     return res
       .status(401)
@@ -197,5 +202,15 @@ export const newSecurityQuestionsValidator = (): any[] => {
         },
       },
     }),
+  ];
+};
+
+export const twoFactorAuthCTNBodyValidator = (): any[] => {
+  return [
+    body("ctn")
+      .exists()
+      .custom((value) => {
+        return isPhoneNumberValid(value);
+      }),
   ];
 };

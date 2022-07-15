@@ -65,6 +65,7 @@ describe("User find own journal tests", () => {
       plainTextPassword: "pwd123",
     });
     const res = await mockUser.getAllJournals();
+    console.log("mockUser", mockUser);
     expect(res).toEqual([]);
   });
 });

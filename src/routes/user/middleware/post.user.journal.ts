@@ -4,7 +4,13 @@ import { getUserId } from "../../utils/get-id";
 
 export async function createUserJournal(req: Request, res: Response) {
   try {
-    const _id = getUserId(res);
+    let _id;
+    if (process.env.NODE_ENV.match("test")) {
+      _id = req.params.userId;
+    } else {
+      _id = getUserId(res);
+    }
+
     const { title, description, photoUrl, tags } = req.body;
     const journalData = await JournalModel.createJournalForUserId({
       ownerId: _id,
