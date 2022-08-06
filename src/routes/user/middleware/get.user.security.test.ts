@@ -34,9 +34,10 @@ describe("get user security tests", () => {
         firstName: "testFn",
         lastName: "testLn",
         plainTextPassword: "testpwd12345",
+        dateOfBirth: new Date().toDateString(),
       });
       const res = await request.get(
-        `/api/user/${mockUser._id}/profile/security/two_factor_status`
+        `/api/user/${mockUser._id}/profile/security/tfa/status`
       );
       expect(res.statusCode).toBe(200);
       expect(res.body).toHaveProperty("twoFactorAuthentication");
@@ -58,6 +59,7 @@ describe("get user security tests", () => {
         firstName: "testFn",
         lastName: "testLn",
         plainTextPassword: "testpwd12345",
+        dateOfBirth: new Date().toDateString(),
       });
       const res = await request.get(
         `/api/user/${mockUser._id.toString()}/security`

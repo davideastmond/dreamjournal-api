@@ -32,6 +32,7 @@ describe("JWToken class tests", () => {
       lastName: "testLast",
       plainTextPassword: "password",
       email: "email@example.com",
+      dateOfBirth: new Date().toDateString(),
     });
 
     const partialSession: TPartialTokenSession = {
@@ -48,6 +49,7 @@ describe("JWToken class tests", () => {
       lastName: "testLast",
       plainTextPassword: "password",
       email: "email@example.com",
+      dateOfBirth: new Date().toDateString(),
     });
 
     const partialSession: TPartialTokenSession = {

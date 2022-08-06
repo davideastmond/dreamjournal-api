@@ -30,6 +30,7 @@ describe("journal delete tests", () => {
       firstName: "f",
       lastName: "ln",
       plainTextPassword: "pwd1234565",
+      dateOfBirth: new Date().toDateString(),
     });
     const journal1 = await JournalModel.createJournalForUserId({
       ownerId: mockUser._id.toString(),
@@ -69,6 +70,7 @@ describe("journal delete tests", () => {
       firstName: "f",
       lastName: "ln",
       plainTextPassword: "pwd1234565",
+      dateOfBirth: new Date().toDateString(),
     });
     const journal1 = await JournalModel.createJournalForUserId({
       ownerId: mockUser._id.toString(),
@@ -107,6 +109,7 @@ describe("journal delete tests", () => {
       firstName: "f",
       lastName: "ln",
       plainTextPassword: "pwd1234565",
+      dateOfBirth: new Date().toDateString(),
     });
     await JournalModel.createJournalForUserId({
       ownerId: mockUser._id.toString(),

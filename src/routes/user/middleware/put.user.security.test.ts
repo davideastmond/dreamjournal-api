@@ -34,6 +34,7 @@ describe("user security questions tests", () => {
       firstName: "TestFn",
       lastName: "testLn",
       plainTextPassword: "plaintextpassword",
+      dateOfBirth: new Date().toDateString(),
     });
 
     const securityQuestion: TUserSecurityQuestionsPutRequestData = {

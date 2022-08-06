@@ -35,6 +35,7 @@ describe("get user journals tests", () => {
       firstName: "testFn",
       lastName: "testLn",
       plainTextPassword: "someTextPassword",
+      dateOfBirth: new Date().toDateString(),
     });
 
     await JournalModel.createJournalForUserId({

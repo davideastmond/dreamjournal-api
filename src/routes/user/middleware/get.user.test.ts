@@ -34,6 +34,7 @@ describe("get.user tests", () => {
       firstName: "test_fn",
       lastName: "test_ln",
       plainTextPassword: "testPwd",
+      dateOfBirth: new Date().toDateString(),
     });
     const res = await request.get(`/api/user/${mockUser._id.toString()}`);
     expect(res.body.email).toBe("testemail@example.com");
@@ -47,6 +48,7 @@ describe("get.user tests", () => {
       firstName: "test_fn",
       lastName: "test_ln",
       plainTextPassword: "testPwd",
+      dateOfBirth: new Date().toDateString(),
     });
     await JournalModel.createJournalForUserId({
       ownerId: mockUser._id.toString(),

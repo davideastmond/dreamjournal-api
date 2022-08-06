@@ -31,6 +31,7 @@ describe("Search utility tests - Journals", () => {
       firstName: "f",
       lastName: "ln",
       plainTextPassword: "pwd1234565",
+      dateOfBirth: new Date().toDateString(),
     });
 
     const testJournals = [

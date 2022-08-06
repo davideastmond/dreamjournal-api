@@ -33,6 +33,7 @@ describe("new user journal post route tests", () => {
       firstName: "test_fn",
       lastName: "test_ln",
       plainTextPassword: "testPwd",
+      dateOfBirth: new Date().toDateString(),
     });
 
     const res = await request

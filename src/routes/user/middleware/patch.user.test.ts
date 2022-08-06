@@ -34,6 +34,7 @@ describe("patch user tests", () => {
         firstName: "fn",
         lastName: "ln",
         plainTextPassword: "testOriginalPassword",
+        dateOfBirth: new Date().toDateString(),
       });
       const res = await request
         .patch(`/api/user/${mockUser._id.toString()}/profile/secure`)
@@ -50,12 +51,14 @@ describe("patch user tests", () => {
         firstName: "fn",
         lastName: "ln",
         plainTextPassword: "testOriginalPassword",
+        dateOfBirth: new Date().toDateString(),
       });
       const res = await request
         .patch(`/api/user/${mockUser._id.toString()}/profile/basic`)
         .send({
           firstName: "newFirstName",
           lastName: "newLastName",
+          dateOfBirth: new Date(),
         });
       expect(res.statusCode).toBe(201);
       expect(res.body.firstName).toBe("newFirstName");

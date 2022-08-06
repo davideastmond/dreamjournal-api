@@ -31,6 +31,7 @@ describe("two factor auth controller tests", () => {
         firstName: "fn",
         lastName: "ln",
         plainTextPassword: "testPassword1234",
+        dateOfBirth: new Date().toDateString(),
       });
 
       const tfController = new TFAuthenticationController(
@@ -66,6 +67,7 @@ describe("two factor auth controller tests", () => {
         firstName: "fn",
         lastName: "ln",
         plainTextPassword: "testPassword1234",
+        dateOfBirth: new Date().toDateString(),
       });
 
       const mockInvalidCTN = "+5897";
@@ -90,6 +92,7 @@ describe("TFA test mode", () => {
       firstName: "fn",
       lastName: "ln",
       plainTextPassword: "testPassword1234",
+      dateOfBirth: new Date().toDateString(),
     });
     const mockInvalidCTN = "+1415557750";
     const tfController = new TFAuthenticationController(
