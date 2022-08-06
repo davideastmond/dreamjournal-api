@@ -32,6 +32,7 @@ describe("tag analytics tests", () => {
       firstName: "f",
       lastName: "ln",
       plainTextPassword: "pwd1234565",
+      dateOfBirth: new Date().toDateString(),
     });
 
     const testJournals = [
@@ -85,6 +86,7 @@ describe("tag analytics tests", () => {
       firstName: "f",
       lastName: "ln",
       plainTextPassword: "pwd1234565",
+      dateOfBirth: new Date().toDateString(),
     });
 
     const testJournals = [

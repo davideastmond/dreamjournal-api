@@ -3,20 +3,20 @@ const bodyParser = require("body-parser");
 const cookieParser = require("cookie-parser");
 import express from "express";
 import cors from "cors";
-import connectDB from "./database.config";
+
 import authenticationRouter from "./routes/authentication/authentication.route";
 import userRouter from "./routes/user/user.route";
 import journalRouter from "./routes/journal/journal.route";
 import searchRouter from "./routes/search/search.route";
 import { IS_PRODUCTION } from "./check-environment-variables";
 import { validateAPIKey } from "./routes/authentication/middleware/validate-api-key";
-
+import { createServer } from "http";
 const app = express();
+const httpServer = createServer(app);
 
 if (IS_PRODUCTION) {
   app.set("trust proxy", 1);
 }
-console.log("Production mode?", IS_PRODUCTION);
 app.use(cookieParser());
 app.use(
   cors({
@@ -38,11 +38,5 @@ app.use("/api/auth", authenticationRouter);
 app.use("/api/user", userRouter);
 app.use("/api/journal", journalRouter);
 app.use("/api/search", searchRouter);
-const port = app.get("port");
 
-const server = app.listen(port, () =>
-  console.log(`Server started on port ${port}`)
-);
-
-connectDB();
-export default server;
+export default httpServer;

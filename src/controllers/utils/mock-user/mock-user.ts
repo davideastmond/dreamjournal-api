@@ -9,5 +9,6 @@ export async function getMockUser(
     lastName: "ln",
     email: emailAddress ?? "email@email.com",
     plainTextPassword: "pwd123",
+    dateOfBirth: new Date().toDateString(),
   });
 }

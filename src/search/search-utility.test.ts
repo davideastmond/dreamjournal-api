@@ -31,6 +31,7 @@ describe("Search utility tests - Journals", () => {
       firstName: "f",
       lastName: "ln",
       plainTextPassword: "pwd1234565",
+      dateOfBirth: new Date().toDateString(),
     });
 
     const testJournals = [
@@ -91,6 +92,11 @@ describe("Search utility tests - Journals", () => {
     expect(results.journals[0].journal.description).toBe("test-unique-id");
     expect(results.journals[0].journal.title).toBe("E pluribus unum");
     expect(results.queryString).toBe("pluribus");
+    expect(
+      results.journals.every(
+        (journal) => journal.journal.ownerId === mockUser._id.toString()
+      )
+    ).toBe(true);
 
     const tagQuery = new QuerySearch("tag2", mockUser._id.toString());
     const tagQueryResults = await tagQuery.getResults();
