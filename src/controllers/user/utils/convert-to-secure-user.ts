@@ -9,5 +9,6 @@ export function convertToSecureUser(user: IUserDocument): TSecureUser {
     journalIds: user.journalIds,
     createdAt: user.createdAt,
     updatedAt: user.updatedAt,
+    dateOfBirth: user.dateOfBirth,
   };
 }

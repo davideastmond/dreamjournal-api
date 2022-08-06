@@ -16,7 +16,8 @@ import {
 } from "./middleware/get.user.security";
 import {
   updatePasswordMiddleware,
-  updateFirstNameLastName,
+  patchPersonalInfo,
+  cancelTwoFactorAuthentication,
 } from "./middleware/patch.user";
 import { createUserJournal } from "./middleware/post.user.journal";
 import { enrollTwoFactorAuthentication } from "./middleware/post.user.security.tfa";
@@ -30,6 +31,7 @@ import {
   userBasicProfileUpdateValidator,
   userPasswordUpdateValidator,
   twoFactorAuthCTNBodyValidator,
+  twoFactorPlainTextPasswordValidator,
 } from "./middleware/user.validators";
 const router = express.Router();
 
@@ -96,7 +98,7 @@ router.patch(
   userBasicProfileUpdateValidator(),
   validateRouteRequest,
   restrictedAccessToSessionUserData,
-  updateFirstNameLastName
+  patchPersonalInfo
 );
 
 router.get(
@@ -121,7 +123,7 @@ router.put(
 );
 
 router.get(
-  "/:userId/profile/security/two_factor_status",
+  "/:userId/profile/security/tfa/status",
   validateAPIKey,
   jwtVerifyMiddleWare,
   mongooseUserIdValidator(),
@@ -139,5 +141,16 @@ router.post(
   validateRouteRequest,
   restrictedAccessToSessionUserData,
   enrollTwoFactorAuthentication
+);
+
+router.patch(
+  "/:userId/profile/security/tfa",
+  validateAPIKey,
+  jwtVerifyMiddleWare,
+  mongooseUserIdValidator(),
+  twoFactorPlainTextPasswordValidator(),
+  validateRouteRequest,
+  restrictedAccessToSessionUserData,
+  cancelTwoFactorAuthentication
 );
 export default router;

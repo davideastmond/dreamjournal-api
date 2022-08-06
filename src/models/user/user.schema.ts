@@ -1,7 +1,7 @@
 import { Schema, model } from "mongoose";
 import { createUniqueUser } from "../../controllers/user/user.create";
 import { getAllJournals } from "../../controllers/user/user.journals.find";
-import { updateFirstNameLastName } from "../../controllers/user/user.profile.update";
+import { updateFirstNameLastNameDob } from "../../controllers/user/user.profile.update";
 import {
   insertSecurityQuestionsForUser,
   updateUserPassword,
@@ -17,6 +17,7 @@ const userSchema = new Schema<IUser>(
     hashedPassword: { type: String, required: true },
     journalIds: { type: Schema.Types.Mixed, required: true, default: {} },
     jwToken: { type: String, default: "" },
+    dateOfBirth: { type: Date, default: null },
     security: {
       isSet: { type: Boolean, default: false },
       recoveryQuestions: {
@@ -36,6 +37,10 @@ const userSchema = new Schema<IUser>(
         token: { type: String, default: null },
         tokenCreatedAt: { type: Number, default: null },
         tokenExpiresAt: { type: Number, default: null },
+        readableTokenDateData: {
+          issued: { type: String, default: null },
+          expires: { type: String, default: null },
+        },
       },
     },
   },
@@ -48,7 +53,7 @@ const userSchema = new Schema<IUser>(
 
 userSchema.methods.getAllJournals = getAllJournals;
 userSchema.methods.updateUserPassword = updateUserPassword;
-userSchema.methods.updateFirstNameLastName = updateFirstNameLastName;
+userSchema.methods.updateFirstNameLastNameDob = updateFirstNameLastNameDob;
 userSchema.methods.insertSecurityQuestionsForUser =
   insertSecurityQuestionsForUser;
 userSchema.statics.createUniqueUser = createUniqueUser;

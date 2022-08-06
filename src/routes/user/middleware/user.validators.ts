@@ -4,6 +4,7 @@ import mongoose from "mongoose";
 import { isURLValid } from "../../../utils/string-validation/url-valid";
 import { SECURITY_QUESTION_TEMPLATES } from "../../../models/user/user.security.data";
 import { isPhoneNumberValid } from "../../../controllers/two-factor-authentication-controller/utils";
+import dayjs from "dayjs";
 
 const SECURITY_IDS = SECURITY_QUESTION_TEMPLATES.map((template) => template.id);
 const MINIMUM_RESPONSE_CHARACTER_COUNT = 4;
@@ -117,6 +118,12 @@ export const userBasicProfileUpdateValidator = (): any[] => {
   return [
     body("firstName").exists().trim().escape(),
     body("lastName").exists().trim().escape(),
+    body("dateOfBirth")
+      .exists()
+      .custom((value) => {
+        const dateObject = dayjs(value);
+        return dayjs(dateObject, "MMM-DD-YYYY", true).isValid();
+      }),
   ];
 };
 
@@ -213,4 +220,8 @@ export const twoFactorAuthCTNBodyValidator = (): any[] => {
         return isPhoneNumberValid(value);
       }),
   ];
+};
+
+export const twoFactorPlainTextPasswordValidator = (): any[] => {
+  return [body("plainTextPassword").exists().isString()];
 };

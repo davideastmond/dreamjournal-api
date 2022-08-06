@@ -1,12 +1,22 @@
 require("dotenv").config();
+const customParseFormat = require("dayjs/plugin/customParseFormat");
 import mongoose from "mongoose";
 import { UserModel } from "../../models/user/user.schema";
 import { IUserDocument } from "../../models/user/user.types";
 import { JWTokenManager } from "../../utils/jwt";
+import { TDecodeResult } from "../../utils/jwt/definitions";
 import { TMessageData } from "../twilio-sms/definitions";
 import { createTwilioTextMessage } from "../twilio-sms/twilio-sms-service";
-import { TAuthCodeResponse } from "./definitions";
+import {
+  T2FADeEnrollResponse,
+  TAuthCodeResponse,
+  TTFAValidationResponse,
+} from "./definitions";
 import { isPhoneNumberValid } from "./utils";
+import dayjs from "dayjs";
+
+dayjs.extend(customParseFormat);
+
 const TFA_MAX = 999999;
 const TFA_MIN = 111111;
 const TFA_AUTH_MESSAGE_TEMPLATE = "Your one-time Oneiro authorization code is";
@@ -35,19 +45,123 @@ class TFAuthenticationController {
     if (!isPhoneNumberValid(ctn))
       throw new Error(`${ctn} does not appear to be a valid phone number`);
     const user = await this.getUser();
-    const authCode = this.generateAuthorizationCode();
-    const token = await this.generateToken(user);
-    const tokenIssued = Date.now();
-    const tokenExpires = tokenIssued + TFA_TOKEN_EXPIRY;
 
-    user.security.twoFactorAuthentication.userCtn = ctn;
-    user.security.twoFactorAuthentication.authCode = authCode;
-    user.security.twoFactorAuthentication.token = token;
-    user.security.twoFactorAuthentication.tokenCreatedAt = tokenIssued;
-    user.security.twoFactorAuthentication.tokenExpiresAt = tokenExpires;
-
+    await this.setCTN(user, ctn);
+    await this.setCode(user);
     await user.save();
     return this.sendAuthCodeTextMessage(user);
+  }
+
+  private async setCTN(user: IUserDocument, ctn: string) {
+    user.security.twoFactorAuthentication.userCtn = ctn;
+  }
+
+  private async setCode(user: IUserDocument) {
+    const authCode = this.generateAuthorizationCode();
+    const tokenData = await this.generateToken(user);
+    user.security.twoFactorAuthentication.authCode = authCode;
+    user.security.twoFactorAuthentication.token = tokenData.token;
+    user.security.twoFactorAuthentication.tokenCreatedAt =
+      tokenData.tokenIssued;
+    user.security.twoFactorAuthentication.tokenExpiresAt =
+      tokenData.tokenExpires;
+    user.security.twoFactorAuthentication.readableTokenDateData.issued = dayjs
+      .unix(tokenData.tokenIssued)
+      .format("DD-MMM-YYYY HH:mm:ss");
+    user.security.twoFactorAuthentication.readableTokenDateData.expires = dayjs
+      .unix(tokenData.tokenExpires)
+      .format("DD-MMM-YYYY HH:mm:ss");
+  }
+  /**
+   * deactivates the TFA setting from a user profile
+   */
+  public async deEnroll(): Promise<T2FADeEnrollResponse> {
+    const user = await this.getUser();
+    const statusMessage =
+      user.security.twoFactorAuthentication.enabled === false
+        ? "Warning: two factor authentication is already disabled"
+        : "ok";
+    user.security.twoFactorAuthentication.enabled = false;
+    user.security.twoFactorAuthentication.userCtn = null;
+    user.security.twoFactorAuthentication.token = null;
+    await user.save();
+
+    return {
+      twoFactorEnabled: user.security.twoFactorAuthentication.enabled,
+      status: "ok",
+      statusMessage,
+    };
+  }
+  /**
+   *
+   * This does the actual validation when user sends their authCode back
+   * We want to make sure everything lines up and the request isn't expired
+   */
+  public async validate({
+    authCode,
+    token,
+    isEnrolling,
+  }: {
+    authCode: string;
+    token: string;
+    isEnrolling: boolean;
+  }): Promise<TTFAValidationResponse> {
+    const user = await this.getUser();
+    const decodedSession = await this.getDecodedTFASessionFromToken(token);
+
+    if (decodedSession.type === "valid") {
+      if (user._id.toString() !== decodedSession.session._id) {
+        return {
+          status: "error",
+          isEnrollment: isEnrolling,
+          statusMessage: "TFA: userIds do not match",
+        };
+      }
+
+      if (this.getIsTokenExpired(decodedSession.session.expires))
+        return {
+          status: "error",
+          isEnrollment: isEnrolling,
+          statusMessage: "TFA: Authorization token expired",
+        };
+
+      if (authCode === user.security?.twoFactorAuthentication?.authCode) {
+        const response = {
+          status: "ok",
+          isEnrollment: isEnrolling,
+          statusMessage: "ok",
+        };
+        if (isEnrolling) {
+          user.security.twoFactorAuthentication.enabled = true;
+          user.security.twoFactorAuthentication.userCtnVerified = true;
+        }
+        await user.save();
+        return response;
+      } else {
+        return {
+          status: "error",
+          isEnrollment: isEnrolling,
+          statusMessage: "TFA: Invalid authorization code",
+        };
+      }
+    }
+    return {
+      status: "error",
+      isEnrollment: isEnrolling,
+      statusMessage: "TFA: Unable to complete verification operation",
+    };
+  }
+
+  private async getDecodedTFASessionFromToken(
+    token: string
+  ): Promise<TDecodeResult> {
+    const data = await JWTokenManager.decodeSession(token);
+    if (data.type === "valid") {
+      return data;
+    }
+    throw new Error(
+      "Getting decoded TFA session from token: returned invalid session."
+    );
   }
 
   private async sendAuthCodeTextMessage(
@@ -92,12 +206,23 @@ class TFAuthenticationController {
     return value.toString();
   }
 
-  private async generateToken(user: IUserDocument): Promise<string> {
+  private async generateToken(user: IUserDocument): Promise<{
+    token: string;
+    tokenIssued: number;
+    tokenExpires: number;
+  }> {
     const encodingResult = await JWTokenManager.encodeSession({
       email: user.email,
       _id: user._id.toString(),
     });
-    return encodingResult.token;
+    const tokenIssued = Date.now();
+    const tokenExpires = tokenIssued + TFA_TOKEN_EXPIRY;
+    return { token: encodingResult.token, tokenIssued, tokenExpires };
+  }
+
+  private getIsTokenExpired(sessionUnixExpiryTime: number): boolean {
+    const currentTimeStamp = Date.now();
+    return currentTimeStamp > sessionUnixExpiryTime;
   }
 }
 

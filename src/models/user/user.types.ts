@@ -14,6 +14,7 @@ export interface IUser {
   jwToken: string;
   createdAt: Date;
   updatedAt: Date;
+  dateOfBirth: Date;
   security: {
     isSet: boolean;
     recoveryQuestions: Array<TSecurityQuestion>;
@@ -25,6 +26,10 @@ export interface IUser {
       token: string | null;
       tokenCreatedAt: number | null;
       tokenExpiresAt: number | null;
+      readableTokenDateData: {
+        issued: string;
+        expires: string;
+      };
     };
   };
 }
@@ -38,6 +43,7 @@ export type TSecureUser = {
   email: string;
   firstName: string;
   lastName: string;
+  dateOfBirth: Date;
   journalIds: { [keyof: string]: Date };
   createdAt: Date;
   updatedAt: Date;
@@ -54,9 +60,10 @@ export type TNewSecurityQuestionDataSubmission = {
 export interface IUserDocument extends IUser, Document {
   getAllJournals: () => Promise<IJournalDocument[]>;
   updateUserPassword: (plainTextPassword: string) => Promise<void>;
-  updateFirstNameLastName: (data: {
+  updateFirstNameLastNameDob: (data: {
     firstName: string;
     lastName: string;
+    dateOfBirth: string | Date;
   }) => Promise<IUserDocument>;
   insertSecurityQuestionsForUser: (
     data: TUserSecurityQuestionsPutRequestData
@@ -67,11 +74,13 @@ export interface IUserModel extends Model<IUserDocument> {
     email,
     firstName,
     lastName,
+    dateOfBirth,
     plainTextPassword,
   }: {
     email: string;
     firstName: string;
     lastName: string;
+    dateOfBirth: string;
     plainTextPassword: string;
   }) => Promise<IUserDocument>;
 }

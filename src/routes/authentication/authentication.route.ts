@@ -6,11 +6,13 @@ import { validateRouteRequest } from "../middleware/validate-route-request";
 import {
   loginAuthenticationValidator,
   registrationValidator,
+  TFAVerifyValidator,
 } from "./middleware/authentication.validators";
 import { validateAPIKey } from "./middleware/validate-api-key";
 import {
   createUniqueUser,
   generateAndSendToken,
+  processTFAVerification,
 } from "./middleware/post.authentication";
 import { jwtVerifyMiddleWare } from "./middleware/jwt-middleware";
 import { sendSecurityQuestionPrompts } from "./middleware/security.get";
@@ -47,5 +49,14 @@ router.get(
   validateAPIKey,
   jwtVerifyMiddleWare,
   sendSecurityQuestionPrompts
+);
+
+router.post(
+  "/security/tfa/verify",
+  validateAPIKey,
+  jwtVerifyMiddleWare,
+  TFAVerifyValidator(),
+  validateRouteRequest,
+  processTFAVerification
 );
 export default router;
