@@ -30,6 +30,7 @@ describe("User find own journal tests", () => {
       lastName: "ln",
       email: "email@email.com",
       plainTextPassword: "pwd123",
+      dateOfBirth: new Date().toDateString(),
     });
 
     await JournalModel.createJournalForUserId({
@@ -63,6 +64,7 @@ describe("User find own journal tests", () => {
       lastName: "ln",
       email: "email@email.com",
       plainTextPassword: "pwd123",
+      dateOfBirth: new Date().toDateString(),
     });
     const res = await mockUser.getAllJournals();
     expect(res).toEqual([]);

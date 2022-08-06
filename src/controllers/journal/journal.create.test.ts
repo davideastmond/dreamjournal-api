@@ -29,6 +29,7 @@ describe("create new journal tests", () => {
       firstName: "f",
       lastName: "ln",
       plainTextPassword: "pwd1234565",
+      dateOfBirth: new Date().toDateString(),
     });
     const result = await JournalModel.createJournalForUserId({
       ownerId: mockUser._id.toString(),
@@ -60,6 +61,7 @@ describe("create new journal tests", () => {
       firstName: "f",
       lastName: "ln",
       plainTextPassword: "pwd1234565",
+      dateOfBirth: new Date().toDateString(),
     });
     await expect(() =>
       UserModel.createUniqueUser({
@@ -67,6 +69,7 @@ describe("create new journal tests", () => {
         firstName: "otherfn",
         lastName: "otherln",
         plainTextPassword: "pwd1234565",
+        dateOfBirth: new Date().toDateString(),
       })
     ).rejects.toThrow();
   });

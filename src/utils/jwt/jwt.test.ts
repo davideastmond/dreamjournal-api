@@ -32,11 +32,11 @@ describe("JWToken class tests", () => {
       lastName: "testLast",
       plainTextPassword: "password",
       email: "email@example.com",
+      dateOfBirth: new Date().toDateString(),
     });
 
     const partialSession: TPartialTokenSession = {
       _id: testUser._id.toString(),
-      createdAt: Date.now(),
       email: testUser.email,
     };
     const encodingResult = await JWTokenManager.encodeSession(partialSession);
@@ -49,11 +49,11 @@ describe("JWToken class tests", () => {
       lastName: "testLast",
       plainTextPassword: "password",
       email: "email@example.com",
+      dateOfBirth: new Date().toDateString(),
     });
 
     const partialSession: TPartialTokenSession = {
       _id: testUser._id.toString(),
-      createdAt: Date.now(),
       email: testUser.email,
     };
     const encodingResult = await JWTokenManager.encodeSession(partialSession);
@@ -65,7 +65,6 @@ describe("JWToken class tests", () => {
     expect(result).toHaveProperty("session");
     expect(result.session).toHaveProperty("email");
     expect(result.session.email).toBe("email@example.com");
-    expect(result.session).toHaveProperty("createdAt");
     expect(result.session).toHaveProperty("issued");
     expect(result.session).toHaveProperty("expires");
   });
@@ -89,7 +88,6 @@ describe("JWToken class tests", () => {
       const mockSession: TTokenSession = {
         _id: "test",
         email: "test",
-        createdAt: Date.now(),
         issued: Date.now(),
         expires: Date.now() + parseInt(process.env.JWT_TOKEN_EXPIRE),
       };
@@ -102,7 +100,6 @@ describe("JWToken class tests", () => {
       const mockSession: TTokenSession = {
         _id: "test",
         email: "test",
-        createdAt: Date.now(),
         issued: Date.now(),
         expires: Date.now() - parseInt(process.env.JWT_TOKEN_EXPIRE),
       };
@@ -114,7 +111,6 @@ describe("JWToken class tests", () => {
       const mockSession: TTokenSession = {
         _id: "test",
         email: "test",
-        createdAt: Date.now(),
         issued: Date.now(),
         expires: Date.now() - 4 * 60 * 60 * 1000,
       };

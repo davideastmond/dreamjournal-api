@@ -24,9 +24,10 @@ afterEach(async () => {
 
 test("user profile update test", async () => {
   const mockUser = await getMockUser();
-  const refreshedUser = await mockUser.updateFirstNameLastName({
+  const refreshedUser = await mockUser.updateFirstNameLastNameDob({
     firstName: "newfn",
     lastName: "newln",
+    dateOfBirth: new Date().toDateString(),
   });
 
   expect(refreshedUser.firstName).toBe("newfn");
