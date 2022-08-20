@@ -5,7 +5,7 @@ import { getUserId } from "../../utils/get-id";
 export async function createUserJournal(req: Request, res: Response) {
   try {
     let _id;
-    if (process.env.NODE_ENV.match("test")) {
+    if (process.env.NODE_ENV && process.env.NODE_ENV.match("test")) {
       _id = req.params.userId;
     } else {
       _id = getUserId(res);
