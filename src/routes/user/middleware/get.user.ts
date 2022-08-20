@@ -12,7 +12,7 @@ export async function getSecureUserProfile(req: Request, res: Response) {
     if (user) {
       if (
         user._id.toString() === userSession ||
-        process.env.NODE_ENV.match("test")
+        (process.env.NODE_ENV && process.env.NODE_ENV.match("test"))
       ) {
         return res.status(200).send({
           _id: user._id.toString(),
@@ -48,7 +48,7 @@ export async function checkIfSessionUser(
     return;
   }
 
-  if (!process.env.NODE_ENV.match("test")) {
+  if (!process.env.NODE_ENV?.match("test")) {
     const id = res.locals.session._id;
     const user = await getSecureUserById(id);
     if (user) return res.status(200).send(user);

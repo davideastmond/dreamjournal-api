@@ -8,7 +8,7 @@ export async function jwtVerifyMiddleWare(
   res: Response,
   next: NextFunction
 ) {
-  if (process.env.NODE_ENV.match("test")) {
+  if (process.env.NODE_ENV && process.env.NODE_ENV.match("test")) {
     next();
     return;
   }

@@ -8,7 +8,7 @@ const authToken = process.env.PRODUCTION_TWILIO_AUTH_TOKEN;
 
 const sourceCTN = IS_PRODUCTION
   ? process.env.PRODUCTION_CTN
-  : process.env.NODE_ENV.match("test")
+  : process.env.NODE_ENV && process.env.NODE_ENV.match("test")
   ? process.env.TWILIO_DUMMY_TEST_CTN
   : process.env.PRODUCTION_CTN;
 const client = require("twilio")(accountSid, authToken);

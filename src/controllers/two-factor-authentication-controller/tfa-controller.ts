@@ -172,7 +172,11 @@ class TFAuthenticationController {
       body: `${TFA_AUTH_MESSAGE_TEMPLATE}: ${user.security.twoFactorAuthentication.authCode}`,
     };
     // In test environment, don't do the Twilio text message but still return response
-    if (this.testMode && process.env.NODE_ENV.match("test"))
+    if (
+      this.testMode &&
+      process.env.NODE_ENV &&
+      process.env.NODE_ENV.match("test")
+    )
       return {
         authCode: user.security.twoFactorAuthentication.authCode,
         token: user.security.twoFactorAuthentication.token,
