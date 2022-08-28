@@ -45,26 +45,4 @@ describe("get user security tests", () => {
       expect(res.body.twoFactorAuthentication.enabled).toBe(false);
     });
   });
-  describe("security questions tests", () => {
-    test("user isn't found, return a 404 response", async () => {
-      const mockMongoObjectID = new mongoose.Types.ObjectId();
-      const res = await request.get(
-        `/api/user/${mockMongoObjectID.toString()}/security`
-      );
-      expect(res.statusCode).toBe(404);
-    });
-    test("get security questions - return appropriate status no questions set", async () => {
-      const mockUser = await UserModel.createUniqueUser({
-        email: "test@email.com",
-        firstName: "testFn",
-        lastName: "testLn",
-        plainTextPassword: "testpwd12345",
-        dateOfBirth: new Date().toDateString(),
-      });
-      const res = await request.get(
-        `/api/user/${mockUser._id.toString()}/security`
-      );
-      expect(res.body).toEqual({ isSet: false, recoveryQuestions: [] });
-    });
-  });
 });

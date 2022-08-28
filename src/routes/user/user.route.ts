@@ -10,10 +10,7 @@ import {
 } from "./middleware/get.user";
 import { getJournalsForUserId } from "./middleware/get.user.journals";
 import { getAllJournalTagCountAnalytics } from "./middleware/get.user.journals.tags.analytics";
-import {
-  getTwoFactorAuthStatus,
-  returnUsersSecurityQuestionsIfAny,
-} from "./middleware/get.user.security";
+import { getTwoFactorAuthStatus } from "./middleware/get.user.security";
 import {
   updatePasswordMiddleware,
   patchPersonalInfo,
@@ -21,12 +18,10 @@ import {
 } from "./middleware/patch.user";
 import { createUserJournal } from "./middleware/post.user.journal";
 import { enrollTwoFactorAuthentication } from "./middleware/post.user.security.tfa";
-import { putUserSecurityQuestionsOnUserDocument } from "./middleware/put.user.security";
 
 import {
   mongooseUserIdValidator,
   newJournalValidator,
-  newSecurityQuestionsValidator,
   restrictedAccessToSessionUserData,
   userBasicProfileUpdateValidator,
   userPasswordUpdateValidator,
@@ -99,27 +94,6 @@ router.patch(
   validateRouteRequest,
   restrictedAccessToSessionUserData,
   patchPersonalInfo
-);
-
-router.get(
-  "/:userId/security",
-  validateAPIKey,
-  jwtVerifyMiddleWare,
-  mongooseUserIdValidator(),
-  validateRouteRequest,
-  restrictedAccessToSessionUserData,
-  returnUsersSecurityQuestionsIfAny
-);
-
-router.put(
-  "/:userId/profile/security",
-  validateAPIKey,
-  jwtVerifyMiddleWare,
-  mongooseUserIdValidator(),
-  newSecurityQuestionsValidator(),
-  validateRouteRequest,
-  restrictedAccessToSessionUserData,
-  putUserSecurityQuestionsOnUserDocument
 );
 
 router.get(
