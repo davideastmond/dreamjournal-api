@@ -2,10 +2,7 @@ import { Schema, model } from "mongoose";
 import { createUniqueUser } from "../../controllers/user/user.create";
 import { getAllJournals } from "../../controllers/user/user.journals.find";
 import { updateFirstNameLastNameDob } from "../../controllers/user/user.profile.update";
-import {
-  insertSecurityQuestionsForUser,
-  updateUserPassword,
-} from "../../controllers/user/user.security.update";
+import { updateUserPassword } from "../../controllers/user/user.security.update";
 import { SchemaOptionsWithPojoToMixed } from "../definitions";
 import { IUser, IUserDocument, IUserModel } from "./user.types";
 
@@ -20,15 +17,6 @@ const userSchema = new Schema<IUser>(
     dateOfBirth: { type: Date, default: null },
     security: {
       isSet: { type: Boolean, default: false },
-      recoveryQuestions: {
-        type: [
-          {
-            question: { id: { type: String }, prompt: { type: String } },
-            answer: String,
-          },
-        ],
-        default: [],
-      },
       twoFactorAuthentication: {
         enabled: { type: Boolean, default: false },
         userCtn: { type: String, default: null },
@@ -54,8 +42,6 @@ const userSchema = new Schema<IUser>(
 userSchema.methods.getAllJournals = getAllJournals;
 userSchema.methods.updateUserPassword = updateUserPassword;
 userSchema.methods.updateFirstNameLastNameDob = updateFirstNameLastNameDob;
-userSchema.methods.insertSecurityQuestionsForUser =
-  insertSecurityQuestionsForUser;
 userSchema.statics.createUniqueUser = createUniqueUser;
 
 export default userSchema;

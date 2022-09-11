@@ -15,7 +15,6 @@ import {
   processTFAVerification,
 } from "./middleware/post.authentication";
 import { jwtVerifyMiddleWare } from "./middleware/jwt-middleware";
-import { sendSecurityQuestionPrompts } from "./middleware/security.get";
 
 const router = express.Router();
 
@@ -42,13 +41,6 @@ router.get(
   (req: Request, res: Response) => {
     res.status(200).send({ response: "OK" });
   }
-);
-
-router.get(
-  "/security/questions",
-  validateAPIKey,
-  jwtVerifyMiddleWare,
-  sendSecurityQuestionPrompts
 );
 
 router.post(
