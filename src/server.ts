@@ -8,6 +8,7 @@ import authenticationRouter from "./routes/authentication/authentication.route";
 import userRouter from "./routes/user/user.route";
 import journalRouter from "./routes/journal/journal.route";
 import searchRouter from "./routes/search/search.route";
+import adminRouter from "./routes/admin/admin.router";
 import { IS_PRODUCTION } from "./check-environment-variables";
 import { validateAPIKey } from "./routes/authentication/middleware/validate-api-key";
 import { createServer } from "http";
@@ -26,8 +27,6 @@ app.use(
   })
 );
 app.use(bodyParser.json());
-// IS_PRODUCTION && app.use(validateAPIToken);
-
 app.set("port", process.env.PORT || 5000);
 
 app.get("/", validateAPIKey, (_req, res) => {
@@ -38,5 +37,6 @@ app.use("/api/auth", authenticationRouter);
 app.use("/api/user", userRouter);
 app.use("/api/journal", journalRouter);
 app.use("/api/search", searchRouter);
+app.use("/api/admin", adminRouter);
 
 export default httpServer;
