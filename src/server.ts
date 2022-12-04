@@ -22,7 +22,7 @@ app.use(
   cors({
     credentials: true,
     origin: true,
-    exposedHeaders: ["X-JWT-Token", "X-Renewed-JWT-Token", "ADMIN_PWD"],
+    exposedHeaders: ["X-JWT-Token", "X-Renewed-JWT-Token"],
   })
 );
 app.use(bodyParser.json());
