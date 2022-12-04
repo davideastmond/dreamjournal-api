@@ -7,6 +7,8 @@ export interface IJournalEntry {
   text: string;
   photoUrl?: string;
   tags: string[];
+  entryDate?: Date; // User should be able to manually enter this
+  // These are automatic timestamps
   createdAt?: Date;
   updatedAt?: Date;
 }

@@ -11,6 +11,7 @@ const journalEntrySchema = new Schema<IJournalEntry>(
     text: { type: String, required: true },
     photoUrl: { type: String, required: false },
     tags: { type: [String], required: false, default: [] },
+    entryDate: { type: Date },
     updatedAt: { type: Date },
     createdAt: { type: Date },
   },

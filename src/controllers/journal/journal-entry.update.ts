@@ -12,6 +12,7 @@ export async function patchJournalEntryAttributes({
   photoUrl,
   text,
   journalEntryId,
+  entryDate,
 }: TJournalEntryAttributesPatchPackageData): Promise<TJournalAttributesReturnData> {
   const changes: TJournalFieldUpdateAction[] = [];
   if (!journalEntryId) throw new Error("Missing a journal entry id");
@@ -141,6 +142,20 @@ export async function patchJournalEntryAttributes({
         field: "photoUrl",
         action: photoUrl.action,
       });
+    }
+  }
+
+  if (entryDate && entryDate.action) {
+    if (entryDate.action === "update") {
+      await JournalModel.updateOne(
+        { "journalEntries._id": journalEntryId },
+        {
+          $set: {
+            "journalEntries.$.entryDate": entryDate.data,
+            updatedAt: new Date(),
+          },
+        }
+      );
     }
   }
 
