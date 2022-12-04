@@ -1,3 +1,4 @@
+import dayjs from "dayjs";
 import { body, checkSchema, param } from "express-validator";
 import mongoose from "mongoose";
 import { isURLValid } from "../../../utils/string-validation/url-valid";
@@ -130,6 +131,27 @@ export function patchJournalAttributesValidator(): any {
             }
             if (req.body.text.action === "delete") return true;
             return false;
+          },
+        },
+      },
+      "entryDate.action": {
+        errorMessage:
+          "The value for action on the entryDate can only be `update`",
+        custom: {
+          options: (value, { req }) => {
+            if (!req.body.entryDate) return true;
+            if (value === "update") return true;
+            return false;
+          },
+        },
+      },
+      "entryDate.data": {
+        errorMessage:
+          "The data value for entryDate needs to be a valid ISO Date string",
+        custom: {
+          options: (value, { req }) => {
+            const entryDate = dayjs(value);
+            return entryDate.isValid();
           },
         },
       },
