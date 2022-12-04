@@ -26,8 +26,6 @@ app.use(
   })
 );
 app.use(bodyParser.json());
-// IS_PRODUCTION && app.use(validateAPIToken);
-
 app.set("port", process.env.PORT || 5000);
 
 app.get("/", validateAPIKey, (_req, res) => {

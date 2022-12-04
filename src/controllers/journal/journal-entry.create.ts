@@ -8,12 +8,14 @@ export async function addNewEntry(
     text,
     photoUrl,
     tags,
+    entryDate,
   }: {
     title: string;
     description?: string;
     text: string;
     photoUrl?: string;
     tags: string[];
+    entryDate?: Date;
   }
 ): Promise<IJournalDocument> {
   const entry = {
@@ -24,6 +26,7 @@ export async function addNewEntry(
     text,
     photoUrl,
     tags,
+    entryDate,
     updatedAt: new Date(),
     createdAt: new Date(),
   };

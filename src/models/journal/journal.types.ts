@@ -27,12 +27,14 @@ export interface IJournalDocument extends IJournal, Document {
     text,
     photoUrl,
     tags,
+    entryDate,
   }: {
     title: string;
     description?: string;
     text: string;
     photoUrl?: string;
     tags: string[];
+    entryDate?: string;
   }) => Promise<IJournalDocument>;
   deleteEntry: (
     journalEntryId: string
@@ -44,6 +46,7 @@ export interface IJournalDocument extends IJournal, Document {
     photoUrl,
     text,
     journalEntryId,
+    entryDate,
   }: TJournalEntryAttributesPatchPackageData) => Promise<TJournalAttributesReturnData>;
   getTagAggregator: () => TagAggregator;
 }
@@ -57,6 +60,7 @@ export type TJournalAttributesPatchPackageData = {
   tags?: TPatchData;
   description?: TPatchData;
   photoUrl?: TPatchData;
+  entryDate?: TPatchData;
 };
 export type TJournalEntryAttributesPatchPackageData =
   TJournalAttributesPatchPackageData & {
