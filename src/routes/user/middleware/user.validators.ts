@@ -2,7 +2,6 @@ import { body, checkSchema, param } from "express-validator";
 import { NextFunction, Request, Response } from "express";
 import mongoose from "mongoose";
 import { isURLValid } from "../../../utils/string-validation/url-valid";
-import { isPhoneNumberValid } from "../../../controllers/two-factor-authentication-controller/utils";
 import dayjs from "dayjs";
 
 export const mongooseUserIdValidator = (): any[] => {
@@ -119,16 +118,6 @@ export const userBasicProfileUpdateValidator = (): any[] => {
       .custom((value) => {
         const dateObject = dayjs(value);
         return dayjs(dateObject, "MMM-DD-YYYY", true).isValid();
-      }),
-  ];
-};
-
-export const twoFactorAuthCTNBodyValidator = (): any[] => {
-  return [
-    body("ctn")
-      .exists()
-      .custom((value) => {
-        return isPhoneNumberValid(value);
       }),
   ];
 };

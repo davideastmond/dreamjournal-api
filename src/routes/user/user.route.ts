@@ -10,14 +10,11 @@ import {
 } from "./middleware/get.user";
 import { getJournalsForUserId } from "./middleware/get.user.journals";
 import { getAllJournalTagCountAnalytics } from "./middleware/get.user.journals.tags.analytics";
-import { getTwoFactorAuthStatus } from "./middleware/get.user.security";
 import {
   updatePasswordMiddleware,
   patchPersonalInfo,
-  cancelTwoFactorAuthentication,
 } from "./middleware/patch.user";
 import { createUserJournal } from "./middleware/post.user.journal";
-import { enrollTwoFactorAuthentication } from "./middleware/post.user.security.tfa";
 
 import {
   mongooseUserIdValidator,
@@ -25,8 +22,6 @@ import {
   restrictedAccessToSessionUserData,
   userBasicProfileUpdateValidator,
   userPasswordUpdateValidator,
-  twoFactorAuthCTNBodyValidator,
-  twoFactorPlainTextPasswordValidator,
 } from "./middleware/user.validators";
 const router = express.Router();
 
@@ -96,35 +91,4 @@ router.patch(
   patchPersonalInfo
 );
 
-router.get(
-  "/:userId/profile/security/tfa/status",
-  validateAPIKey,
-  jwtVerifyMiddleWare,
-  mongooseUserIdValidator(),
-  validateRouteRequest,
-  restrictedAccessToSessionUserData,
-  getTwoFactorAuthStatus
-);
-
-router.post(
-  "/:userId/profile/security/tfa/enroll",
-  validateAPIKey,
-  jwtVerifyMiddleWare,
-  mongooseUserIdValidator(),
-  twoFactorAuthCTNBodyValidator(),
-  validateRouteRequest,
-  restrictedAccessToSessionUserData,
-  enrollTwoFactorAuthentication
-);
-
-router.patch(
-  "/:userId/profile/security/tfa",
-  validateAPIKey,
-  jwtVerifyMiddleWare,
-  mongooseUserIdValidator(),
-  twoFactorPlainTextPasswordValidator(),
-  validateRouteRequest,
-  restrictedAccessToSessionUserData,
-  cancelTwoFactorAuthentication
-);
 export default router;

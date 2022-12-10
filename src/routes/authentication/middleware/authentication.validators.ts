@@ -16,12 +16,3 @@ export const loginAuthenticationValidator = (): any[] => {
     body("password").not().isEmpty(),
   ];
 };
-
-export const TFAVerifyValidator = (): any[] => {
-  return [
-    body("userId").exists().not().isEmpty(),
-    body("authCode").exists().not().isEmpty(),
-    body("tfaToken").exists().not().isEmpty(),
-    body("isEnrolling").exists().isBoolean(),
-  ];
-};

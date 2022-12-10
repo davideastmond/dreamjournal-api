@@ -16,19 +16,10 @@ const userSchema = new Schema<IUser>(
     jwToken: { type: String, default: "" },
     dateOfBirth: { type: Date, default: null },
     security: {
-      isSet: { type: Boolean, default: false },
-      twoFactorAuthentication: {
-        enabled: { type: Boolean, default: false },
-        userCtn: { type: String, default: null },
-        userCtnVerified: { type: Boolean, default: false },
-        authCode: { type: String, default: null },
-        token: { type: String, default: null },
-        tokenCreatedAt: { type: Number, default: null },
-        tokenExpiresAt: { type: Number, default: null },
-        readableTokenDateData: {
-          issued: { type: String, default: null },
-          expires: { type: String, default: null },
-        },
+      passwordRecovery: {
+        token: String,
+        createdAt: Date,
+        expiresAt: Date,
       },
     },
   },
