@@ -1,6 +1,6 @@
 require("dotenv").config();
 import { Request, Response, NextFunction } from "express";
-import { JWTokenManager } from "../../../utils/jwt";
+import { TokenSessionManager } from "../../../controllers/authentication/token-session-manager";
 import { TTokenSession } from "../../../utils/jwt/definitions";
 
 export async function jwtVerifyMiddleWare(
@@ -30,16 +30,16 @@ export async function jwtVerifyMiddleWare(
   }
 
   try {
-    const decodedSession = await JWTokenManager.decodeSession(tokenFromHeader);
+    const decodedSession = await TokenSessionManager.decodeSession(
+      tokenFromHeader
+    );
     if (decodedSession.type !== "valid") {
       return unauthorized("Token is missing or invalid in this request");
     }
-    const sessionStatus = JWTokenManager.checkExpirationStatus(
+    const sessionStatus = TokenSessionManager.checkExpirationStatus(
       decodedSession.session
     );
-    if (decodedSession.session.expires === 1646754108594) {
-      console.log("ALERT DECODED SESSION 25");
-    }
+
     if (sessionStatus === "expired") {
       return unauthorized("Session expired");
     }
@@ -47,9 +47,8 @@ export async function jwtVerifyMiddleWare(
     let session: TTokenSession;
 
     if (sessionStatus === "grace") {
-      const { token, expires, issued } = await JWTokenManager.encodeSession(
-        decodedSession.session
-      );
+      const { token, expires, issued } =
+        await TokenSessionManager.encodeSession(decodedSession.session);
       session = {
         ...decodedSession.session,
         expires,

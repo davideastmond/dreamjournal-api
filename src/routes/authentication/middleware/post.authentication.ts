@@ -1,7 +1,7 @@
 import { Request, Response } from "express";
+import { TokenSessionManager } from "../../../controllers/authentication/token-session-manager";
 import { UserModel } from "../../../models/user/user.schema";
 import { checkPassword } from "../../../utils/crypto/crypto";
-import { JWTokenManager } from "../../../utils/jwt";
 import { TPartialTokenSession } from "../../../utils/jwt/definitions";
 export const createUniqueUser = async (req: Request, res: Response) => {
   const { email, password, firstName, lastName, dateOfBirth } = req.body;
@@ -36,7 +36,7 @@ export const generateAndSendToken = async (req: Request, res: Response) => {
         hashedPassword: user.hashedPassword,
         plainTextPassword: password,
       });
-      if (!passwordResult)
+      if (passwordResult)
         return res.status(401).send({
           error:
             "Authentication error: please check the email address and password combination.",
@@ -45,7 +45,7 @@ export const generateAndSendToken = async (req: Request, res: Response) => {
         _id: user._id.toString(),
         email: user.email,
       };
-      const session = await JWTokenManager.encodeSession(partialSession);
+      const session = await TokenSessionManager.encodeSession(partialSession);
       user.jwToken = session.token;
       await user.save();
       return res.status(200).send(session);

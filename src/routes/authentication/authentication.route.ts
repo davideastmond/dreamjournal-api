@@ -4,6 +4,7 @@ import * as express from "express";
 import { Request, Response } from "express";
 import { validateRouteRequest } from "../middleware/validate-route-request";
 import {
+  initiatePasswordRecoveryRequestValidator,
   loginAuthenticationValidator,
   registrationValidator,
 } from "./middleware/authentication.validators";
@@ -13,6 +14,7 @@ import {
   generateAndSendToken,
 } from "./middleware/post.authentication";
 import { jwtVerifyMiddleWare } from "./middleware/jwt-middleware";
+import { authenticateRequest } from "./middleware/authentication-password-recovery-request";
 
 const router = express.Router();
 
@@ -41,8 +43,14 @@ router.get(
   }
 );
 
-// Initialize the password recovery request
+// Initialize the password recovery request. User doesn't need a JWT
 // This should receive the e-mail and dob, authenticate it and then
 // send e-mail to user with special recover link
-router.post("/password-recovery", validateAPIKey);
+router.post(
+  "/password-recovery",
+  validateAPIKey,
+  initiatePasswordRecoveryRequestValidator(),
+  validateRouteRequest,
+  authenticateRequest
+);
 export default router;
