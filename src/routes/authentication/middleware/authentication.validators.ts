@@ -16,3 +16,7 @@ export const loginAuthenticationValidator = (): any[] => {
     body("password").not().isEmpty(),
   ];
 };
+
+export const initiatePasswordRecoveryRequestValidator = (): any[] => {
+  return [body("email").isEmail(), body("dateOfBirth").isDate()];
+};
