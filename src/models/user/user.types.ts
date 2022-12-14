@@ -14,6 +14,7 @@ export interface IUser {
   security: {
     passwordRecovery: {
       token: string;
+      acceptanceToken: string | null | undefined;
       createdAt: Date;
       expiresAt: Date;
     };

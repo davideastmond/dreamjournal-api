@@ -20,6 +20,7 @@ const userSchema = new Schema<IUser>(
         token: String,
         createdAt: Date,
         expiresAt: Date,
+        acceptanceToken: { type: String, default: null },
       },
     },
   },
