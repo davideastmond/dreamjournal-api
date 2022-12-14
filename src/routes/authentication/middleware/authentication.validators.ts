@@ -20,3 +20,7 @@ export const loginAuthenticationValidator = (): any[] => {
 export const initiatePasswordRecoveryRequestValidator = (): any[] => {
   return [body("email").isEmail(), body("dateOfBirth").isDate()];
 };
+
+export const recoveryRequestValidator = (): any[] => {
+  return [body("encryptedToken").exists()];
+};
