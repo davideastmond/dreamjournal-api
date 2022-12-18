@@ -1,8 +1,7 @@
 import { Request, Response } from "express";
-import { TFAuthenticationController } from "../../../controllers/two-factor-authentication-controller";
+import { TokenSessionManager } from "../../../controllers/authentication/token-session-manager";
 import { UserModel } from "../../../models/user/user.schema";
 import { checkPassword } from "../../../utils/crypto/crypto";
-import { JWTokenManager } from "../../../utils/jwt";
 import { TPartialTokenSession } from "../../../utils/jwt/definitions";
 export const createUniqueUser = async (req: Request, res: Response) => {
   const { email, password, firstName, lastName, dateOfBirth } = req.body;
@@ -46,7 +45,7 @@ export const generateAndSendToken = async (req: Request, res: Response) => {
         _id: user._id.toString(),
         email: user.email,
       };
-      const session = await JWTokenManager.encodeSession(partialSession);
+      const session = await TokenSessionManager.encodeSession(partialSession);
       user.jwToken = session.token;
       await user.save();
       return res.status(200).send(session);
@@ -59,30 +58,6 @@ export const generateAndSendToken = async (req: Request, res: Response) => {
   } catch (err) {
     return res.status(401).send({
       error: "Server error: We're unable to create an authentication session",
-    });
-  }
-};
-
-export const processTFAVerification = async (req: Request, res: Response) => {
-  const { tfaToken, userId, authCode, isEnrolling } = req.body;
-
-  try {
-    const tfaController = new TFAuthenticationController(userId, {
-      testMode: true,
-    });
-    const verifyResponse = await tfaController.validate({
-      authCode,
-      isEnrolling,
-      token: tfaToken,
-    });
-    if (verifyResponse.status === "error")
-      return res.status(400).send(verifyResponse);
-    return res.status(200).send({
-      verifyResponse,
-    });
-  } catch (exception: any) {
-    return res.status(500).send({
-      error: "TFA server error",
     });
   }
 };

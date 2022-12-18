@@ -12,18 +12,11 @@ export interface IUser {
   updatedAt: Date;
   dateOfBirth: Date;
   security: {
-    twoFactorAuthentication: {
-      enabled: boolean;
-      userCtn: string | null;
-      userCtnVerified: boolean;
-      authCode: string | null;
-      token: string | null;
-      tokenCreatedAt: number | null;
-      tokenExpiresAt: number | null;
-      readableTokenDateData: {
-        issued: string;
-        expires: string;
-      };
+    passwordRecovery: {
+      token: string;
+      acceptanceToken: string | null | undefined;
+      createdAt: Date;
+      expiresAt: Date;
     };
   };
 }
