@@ -32,7 +32,7 @@ export const authenticateRequest = async (req: Request, res: Response) => {
         <p><b>Oneiro.live</b> admin team</p>
       </html>`,
     };
-    await mailerClient.send(messageData, true);
+    await mailerClient.send(messageData);
     return res.status(200).send({ url });
   } catch (err: any) {
     console.log(err);

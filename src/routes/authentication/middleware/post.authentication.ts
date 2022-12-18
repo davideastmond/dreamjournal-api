@@ -36,7 +36,7 @@ export const generateAndSendToken = async (req: Request, res: Response) => {
         hashedPassword: user.hashedPassword,
         plainTextPassword: password,
       });
-      if (passwordResult)
+      if (!passwordResult)
         return res.status(401).send({
           error:
             "Authentication error: please check the email address and password combination.",

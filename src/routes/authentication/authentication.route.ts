@@ -6,6 +6,7 @@ import { validateRouteRequest } from "../middleware/validate-route-request";
 import {
   initiatePasswordRecoveryRequestValidator,
   loginAuthenticationValidator,
+  recoveryRequestCompleterValidator,
   recoveryRequestValidator,
   registrationValidator,
 } from "./middleware/authentication.validators";
@@ -16,7 +17,12 @@ import {
 } from "./middleware/post.authentication";
 import { jwtVerifyMiddleWare } from "./middleware/jwt-middleware";
 import { authenticateRequest } from "./middleware/authentication-password-recovery-request";
-import { authenticatePasswordRecoveryRequest } from "./middleware/authenticate-request";
+import {
+  authenticatePasswordRecoveryRequest,
+  checkTokenExpired,
+  decodePasswordRecoveryEncryptedToken,
+  findUserByDecodedToken,
+} from "./middleware/authenticate-request";
 
 const router = express.Router();
 
@@ -68,5 +74,24 @@ router.post(
   recoveryRequestValidator(),
   validateRouteRequest,
   authenticatePasswordRecoveryRequest
+);
+
+/**
+ * This route contains the password replace data
+ * it contains the encrypted token, acceptance token and the new password
+ * we want to verify that
+ * 1, the encrypted token is not expired and valid
+ * 2. acceptance token matches
+ *
+ * - Then we update the user record
+ */
+router.post(
+  "/password-recovery/complete",
+  validateAPIKey,
+  recoveryRequestCompleterValidator(),
+  validateRouteRequest,
+  decodePasswordRecoveryEncryptedToken,
+  findUserByDecodedToken,
+  checkTokenExpired
 );
 export default router;
