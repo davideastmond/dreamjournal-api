@@ -20,10 +20,9 @@ export class MailGunAPIClient {
 
   public async send(
     data: IMailGunClientSendParams,
-    test?: boolean
+    options?: { test?: boolean }
   ): Promise<void> {
-    if (test) return;
-    const result = await this.mailGunClient.messages.create(DOMAIN, data);
-    console.info("16 - send result", result);
+    if (options && options.test === true) return;
+    await this.mailGunClient.messages.create(DOMAIN, data);
   }
 }
