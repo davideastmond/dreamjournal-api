@@ -23,7 +23,7 @@ export class QuerySearch {
     };
   }
 
-  public async getResults() {
+  public async getResults(): Promise<TSearchResults> {
     await this.getJournalMatches();
     if (!this.nonIndexedResults) {
       return this.results;
@@ -31,10 +31,11 @@ export class QuerySearch {
     return { ...this.results, otherInfo: "non-index result" };
   }
 
-  private async getJournalMatches() {
-    const tagMatches = await this.getJournalTagMatches();
-    const indexedMatches = await this.getIndexedJournalMatches();
-    const entryQueries =
+  private async getJournalMatches(): Promise<void> {
+    const tagMatches: TJournalMatchResult[] = await this.getJournalTagMatches();
+    const indexedMatches: TJournalMatchResult[] =
+      await this.getIndexedJournalMatches();
+    const entryQueries: IJournalEntry[] =
       this.getJournalEntriesFromJournalMatchResults(indexedMatches);
 
     let journalEntryQueryResults;
@@ -112,7 +113,9 @@ export class QuerySearch {
     return entries;
   }
 
-  private async getFallBackJournalEntryMatches() {
+  private async getFallBackJournalEntryMatches(): Promise<
+    TJournalEntryMatchResult[]
+  > {
     const journals = await JournalModel.find({
       ownerId: this.userId,
     });
