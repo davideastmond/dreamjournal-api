@@ -28,6 +28,7 @@ export interface IJournalDocument extends IJournal, Document {
     photoUrl,
     tags,
     entryDate,
+    lucid,
   }: {
     title: string;
     description?: string;
@@ -35,6 +36,7 @@ export interface IJournalDocument extends IJournal, Document {
     photoUrl?: string;
     tags: string[];
     entryDate?: string;
+    lucid?: boolean;
   }) => Promise<IJournalDocument>;
   deleteEntry: (
     journalEntryId: string
@@ -47,6 +49,7 @@ export interface IJournalDocument extends IJournal, Document {
     text,
     journalEntryId,
     entryDate,
+    lucid,
   }: TJournalEntryAttributesPatchPackageData) => Promise<TJournalAttributesReturnData>;
   getTagAggregator: () => TagAggregator;
 }
@@ -60,12 +63,14 @@ export type TJournalAttributesPatchPackageData = {
   tags?: TPatchData;
   description?: TPatchData;
   photoUrl?: TPatchData;
-  entryDate?: TPatchData;
 };
+
 export type TJournalEntryAttributesPatchPackageData =
   TJournalAttributesPatchPackageData & {
     text?: TPatchData;
     journalEntryId: string;
+    entryDate?: TPatchData;
+    lucid?: TPatchData;
   };
 
 export type TUpdateAction = "update" | "delete";
@@ -76,7 +81,15 @@ export type TPatchData = {
 };
 
 export type TJournalFieldUpdateAction = {
-  field: "title" | "tags" | "description" | "photoUrl" | "text" | "no changes";
+  field:
+    | "title"
+    | "tags"
+    | "description"
+    | "photoUrl"
+    | "text"
+    | "entryDate"
+    | "lucid"
+    | "no changes";
   action: TUpdateAction;
   data?: string | string[] | null;
 };

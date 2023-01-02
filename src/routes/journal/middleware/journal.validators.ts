@@ -45,7 +45,7 @@ export function patchJournalAttributesValidator(): any {
         errorMessage:
           "When performing update operation, the value for data should exist and be a non-empty string",
         custom: {
-          options: (value, { req }) => {
+          options: (value: any, { req }) => {
             if (!req.body.title) return true;
             if (req.body.title.action === "update") {
               if (value && value.trim().length > 0) return true;
@@ -64,7 +64,7 @@ export function patchJournalAttributesValidator(): any {
       },
       "description.data": {
         custom: {
-          options: (value, { req }) => {
+          options: (value: any, { req }) => {
             if (!req.body.description) return true;
             if (req.body.description.action === "update") {
               if (value && value.trim().length > 0) return true;
@@ -82,7 +82,7 @@ export function patchJournalAttributesValidator(): any {
       },
       "tags.data": {
         custom: {
-          options: (value, { req }) => {
+          options: (value: any, { req }) => {
             if (!req.body.tags) return true;
             if (value && req.body.tags.action === "update") {
               if (!Array.isArray(value)) return false;
@@ -102,7 +102,7 @@ export function patchJournalAttributesValidator(): any {
         errorMessage:
           "The value for data should exist and be in a URL format, pointing to some resource. If you want to delete photoUrl data, use the `delete` action",
         custom: {
-          options: (value, { req }) => {
+          options: (value: any, { req }) => {
             if (!req.body.photoUrl) return true;
             if (req.body.photoUrl.action === "update") {
               if (!value || value.trim().length === 0) return false;
@@ -123,7 +123,7 @@ export function patchJournalAttributesValidator(): any {
         errorMessage:
           "The value for data should exist and be in a non-empty string",
         custom: {
-          options: (value, { req }) => {
+          options: (value: any, { req }) => {
             if (!req.body.text) return true;
             if (req.body.text.action === "update") {
               if (value && value.trim().length > 0) return true;
@@ -138,7 +138,7 @@ export function patchJournalAttributesValidator(): any {
         errorMessage:
           "The value for action on the entryDate can only be `update`",
         custom: {
-          options: (value, { req }) => {
+          options: (value: any, { req }) => {
             if (!req.body.entryDate) return true;
             if (value === "update") return true;
             return false;
@@ -149,9 +149,32 @@ export function patchJournalAttributesValidator(): any {
         errorMessage:
           "The data value for entryDate needs to be a valid ISO Date string",
         custom: {
-          options: (value, { req }) => {
+          options: (value: any) => {
             const entryDate = dayjs(value);
             return entryDate.isValid();
+          },
+        },
+      },
+      "lucid.action": {
+        errorMessage: "The value for action on the lucid can only be `update`",
+        custom: {
+          options: (value: any, { req }) => {
+            if (!req.body.lucid) return true;
+            if (value === "update") return true;
+            return false;
+          },
+        },
+      },
+      "lucid.data": {
+        errorMessage: "The data value for lucid needs to be a boolean",
+        custom: {
+          options: (value: any) => {
+            if (value) {
+              if (value.toString() === "true" || value.toString() === "false")
+                return true;
+              return false;
+            }
+            return true;
           },
         },
       },
@@ -191,5 +214,6 @@ export function newJournalEntryValidator(): any {
         }
         return true;
       }),
+    body("lucid").optional({ nullable: true, checkFalsy: true }),
   ];
 }
