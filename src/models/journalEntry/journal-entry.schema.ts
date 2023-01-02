@@ -4,6 +4,11 @@ import { IJournalEntry } from "./journal-entry.types";
 
 const journalEntrySchema = new Schema<IJournalEntry>(
   {
+    attributes: {
+      required: false,
+      default: {},
+      lucid: { type: Boolean, required: false, default: false },
+    },
     parentJournalId: { type: String, required: true },
     ownerId: { type: String, required: true },
     title: { type: String, required: true },
