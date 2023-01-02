@@ -13,6 +13,7 @@ export async function patchJournalEntryAttributes({
   text,
   journalEntryId,
   entryDate,
+  lucid,
 }: TJournalEntryAttributesPatchPackageData): Promise<TJournalAttributesReturnData> {
   const changes: TJournalFieldUpdateAction[] = [];
   if (!journalEntryId) throw new Error("Missing a journal entry id");
@@ -156,6 +157,30 @@ export async function patchJournalEntryAttributes({
           },
         }
       );
+      changes.push({
+        field: "entryDate",
+        action: entryDate.action,
+        data: entryDate.data,
+      });
+    }
+  }
+
+  if (lucid && lucid.action) {
+    if (lucid.action === "update") {
+      await JournalModel.updateOne(
+        { "journalEntries._id": journalEntryId },
+        {
+          $set: {
+            "journalEntries.$.attributes.lucid": lucid.data,
+            updatedAt: new Date(),
+          },
+        }
+      );
+      changes.push({
+        field: "lucid",
+        action: lucid.action,
+        data: lucid.data,
+      });
     }
   }
 

@@ -9,6 +9,7 @@ export async function addNewEntry(
     photoUrl,
     tags,
     entryDate,
+    lucid,
   }: {
     title: string;
     description?: string;
@@ -16,9 +17,13 @@ export async function addNewEntry(
     photoUrl?: string;
     tags: string[];
     entryDate?: Date;
+    lucid?: boolean;
   }
 ): Promise<IJournalDocument> {
   const entry = {
+    attributes: {
+      lucid: !!lucid,
+    },
     parentJournalId: this._id.toString(),
     ownerId: this.ownerId,
     title,

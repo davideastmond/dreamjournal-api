@@ -27,7 +27,8 @@ export async function routePatchJournalEntryAttributes(
   req: Request,
   res: Response
 ) {
-  const { title, description, tags, photoUrl, text, entryDate } = req.body;
+  const { title, description, tags, photoUrl, text, entryDate, lucid } =
+    req.body;
   const { journalId, journalEntryId } = req.params;
 
   try {
@@ -45,6 +46,7 @@ export async function routePatchJournalEntryAttributes(
       description,
       photoUrl,
       entryDate,
+      lucid,
     });
     return res.status(200).send(patchData);
   } catch (exception) {

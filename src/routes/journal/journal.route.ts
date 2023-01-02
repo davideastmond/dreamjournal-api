@@ -90,6 +90,7 @@ router.delete(
   deleteEntryFromJournal
 );
 
+// patch journal entry
 router.patch(
   "/:journalId/entry/:journalEntryId",
   validateAPIKey,
